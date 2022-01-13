@@ -28,6 +28,9 @@ class Duration {
       { type: "ms", value: this.ms },
     ];
   }
+  get json() {
+    return this.array.reduce((acc, stuff) => (acc[stuff.type] = stuff.value, acc), {})
+  }
   /**
    *
    * @param {Array} values - The values required
@@ -64,6 +67,9 @@ class Duration {
     return `${this.array
       .map((x) => `${x.value} ${keyList[x.type]}`)
       .join(", ")}`;
+  }
+  toString() {
+    return `[Duration ${this.stringify(['d', 'h', 'm', 's'], true)}]`
   }
   static getCurrentDuration() {
     return new Date().setHours(0, 0, 0, 0);
