@@ -1,0 +1,24 @@
+{
+  "name": "duration.js",
+  "version": "1.0.0",
+  "description": "Get the formatted time duration",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/retraigo/duration.js.git"
+  },
+  "keywords": [
+    "duration",
+    "time",
+    "timestamp"
+  ],
+  "author": "retraigo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/retraigo/duration.js/issues"
+  },
+  "homepage": "https://github.com/retraigo/duration.js#readme"
+}
