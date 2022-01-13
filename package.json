@@ -1,5 +1,5 @@
 {
-  "name": "duration.js",
+  "name": "@retraigo/duration.js",
   "version": "1.0.0",
   "description": "Get the formatted time duration",
   "main": "index.js",
