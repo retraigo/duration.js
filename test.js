@@ -1,0 +1,5 @@
+const duration = require('./index')
+console.log(new duration())
+console.log(new duration(0))
+console.log(new duration(3545346))
+console.log(new duration(-1))
