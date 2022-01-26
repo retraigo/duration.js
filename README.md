@@ -1,6 +1,6 @@
 # duration.js
 
-Get the formated time duration
+Get the formated time duration. No more development here. Moved to [retraigo/lala](https://github.com/retraigo/lala)
 
 ## Installation
 
