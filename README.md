@@ -14,13 +14,26 @@ $ pnpm install @retraigo/duration.js # PNPM
 ```js
 const Duration = require("@retraigo/duration.js");
 
-console.log(new Duration()); // Get duration since midnight
+new Duration(); // Get duration since midnight
 
-console.log(new Duration(3545346)); // A random duration
+new Duration(3545346); // A random duration
 
-console.log(new Duration(0)); // Just 0
+new Duration(0); // Just 0
 
-console.log(new Duration(-1)); // Negative duration returns 0 too
+new Duration(-1); // Negative duration returns 0 too
+```
+
+### From Text
+```js
+Duration.fromString("1m2s") // Duration {d:0, h:0, m:1, s:2, ms:0}
+
+Duration.fromString("4090 sec 4939  days 7342  hour 2324milliseconds 4344 min") // // Duration {d: 5246, h: 13, m: 52, s: 12, ms: 324 }
+```
+
+You can also get the entire Duration in milliseconds through the `raw` property.
+```js
+const dur = Duration.fromString("4090 sec 4939  days 7342  hour 2324milliseconds 4344 min")
+dur.raw // 453304332324
 ```
 
 ### Properties
