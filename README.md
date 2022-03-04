@@ -12,7 +12,8 @@ $ pnpm install @retraigo/duration.js # PNPM
 ### Basic Usage
 
 ```js
-const Duration = require("@retraigo/duration.js");
+import Duration from "@retraigo/duration.js"; // Node
+import Duration from "https://deno.land/x/durationjs@v2.0.0/index.js" // Deno
 
 new Duration(); // Get duration since midnight
 
