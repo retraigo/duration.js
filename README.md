@@ -15,6 +15,8 @@ $ pnpm install @retraigo/duration.js # PNPM
 import Duration from "@retraigo/duration.js"; // Node
 import Duration from "https://deno.land/x/durationjs@v2.0.0/index.js" // Deno
 
+const Duration = await import("@retraigo/duration.js") // Node with CommonJS
+
 new Duration(); // Get duration since midnight
 
 new Duration(3545346); // A random duration
