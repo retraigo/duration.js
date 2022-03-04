@@ -1,4 +1,4 @@
-const Duration = require("./index");
+import Duration from "./index.js";
 
 /*
 const dur = new Duration(177013); // A random duration

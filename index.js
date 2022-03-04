@@ -10,7 +10,7 @@ const keyList = {
 /**
  * Duration class. Yes, Duration. Ain't gonna give it a better name with my crappy naming sense.
  */
-class Duration {
+export default class Duration {
   constructor(timestamp = Duration.getCurrentDuration()) {
     if (timestamp < 1) timestamp = 0; // Prevent negative time
     this.raw = timestamp;
@@ -94,4 +94,4 @@ function matchReg(str, t) {
   return parseInt(matched[1].replace(t, ""))
 }
 
-module.exports = Duration;
+// module.exports = Duration;
