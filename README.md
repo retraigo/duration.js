@@ -3,8 +3,8 @@
 ## Installation
 
 ```bash
-$ npm install --save @retraigo/duration.js # NPM
-$ pnpm install @retraigo/duration.js # PNPM
+$ npm install --save get-duration # NPM
+$ pnpm install get-duration # PNPM
 ```
 
 ## Usage
@@ -12,7 +12,7 @@ $ pnpm install @retraigo/duration.js # PNPM
 ### Basic Usage
 
 ```js
-const Duration = require("@retraigo/duration.js");
+const Duration = require("get-duration");
 
 console.log(new Duration()); // Get duration since midnight
 
