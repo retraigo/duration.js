@@ -14,4 +14,4 @@ console.log(new Duration(114750).json);
 console.log(new Duration(245074).array);
 
 */
-console.log(Duration.fromString("4939  days 7342  hour 324milliseconds 4344 min").getFormattedDuration("s", "h"))
+ console.log(Duration.fromString("4min 54h 5d 44 s"))
