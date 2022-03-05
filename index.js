@@ -134,8 +134,6 @@ export default class Duration {
 function matchReg(str, t) {
   const reg = new RegExp(`(\\d+)${t}(?:[^a-z]|$)`, "i");
   const matched = reg.exec(str);
-  console.log(t)
-  console.log(matched)
   if (!matched) return 0;
   return parseInt(matched[1].replace(t, ""));
 }
