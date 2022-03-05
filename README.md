@@ -12,8 +12,10 @@ $ pnpm install @retraigo/duration.js # PNPM
 ### Basic Usage
 
 ```js
-import Duration from "@retraigo/duration.js"; // Node
-import Duration from "https://deno.land/x/durationjs@v2.0.0/index.js"; // Deno
+// Node
+import Duration from "@retraigo/duration.js"; 
+// Deno
+import Duration from "https://deno.land/x/durationjs@v2.0.0/index.js"; 
 
 const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
 
