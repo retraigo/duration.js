@@ -1,6 +1,6 @@
 {
   "name": "@retraigo/duration.js",
-  "version": "2.1.1",
+  "version": "2.1.3",
   "type": "module",
   "description": "Get the formatted time duration",
   "main": "index.js",

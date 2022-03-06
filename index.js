@@ -97,7 +97,7 @@ export default class Duration {
     return `[Duration ${this.stringify(["d", "h", "m", "s"], true)}]`;
   }
   static fromString(str) {
-    str = str.replace(/\s/g, "");
+    str = str.replace(/\s\s/g, "");
     const days =
       matchReg(str, "d") || matchReg(str, "days") || matchReg(str, "day");
     const hours =
@@ -132,7 +132,7 @@ export default class Duration {
 }
 
 function matchReg(str, t) {
-  const reg = new RegExp(`(\\d+)${t}(?:[^a-z]|$)`, "i");
+  const reg = new RegExp(`(\\d+)\\s?${t}(?:[^a-z]|$)`, "i");
   const matched = reg.exec(str);
   if (!matched) return 0;
   return parseInt(matched[1].replace(t, ""));
