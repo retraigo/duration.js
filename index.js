@@ -7,8 +7,9 @@ const keyList = {
 };
 
 /**
+ * A duration class which parses milliseconds into human readable form.
  * @class
- * @param {Number} time - duration in milliseconds
+ * @param {Number} timestamp - Duration in milliseconds
  * @returns {Duration}
  */
 
@@ -23,6 +24,7 @@ class Duration {
     this.ms = Math.trunc(timestamp) % 1000;
   }
   /**
+   * Data in the class mapped into an Array with properties "type" and "value"
    * @returns {Array}
    */
   get array() {
@@ -35,6 +37,7 @@ class Duration {
     ];
   }
   /**
+   * Data in the class mapped as a JavaScript Object.
    * @returns {Object}
    */
   get json() {
@@ -81,10 +84,10 @@ class Duration {
       .join(", ")}`;
   }
   /**
-   *
-   * @param {String} from - unit to display from
-   * @param {String} to - unit to display upto
-   * @returns {String} formatted string
+   * Get a duration formatted using colons (:)
+   * @param {String} fromT - Unit to display from
+   * @param {String} toT - Unit to display upto
+   * @returns {String} Formatted string
    */
   getFormattedDuration(fromT = "d", toT = "ms") {
     if (
@@ -105,19 +108,24 @@ class Duration {
     return durations.join(":");
   }
   /**
-   *
-   * @returns {String} formatted string
+   * Get a simple formatted duration in the form dd:hh:mm:ss:ms
+   * @returns {String} Formatted string
    */
   getSimpleFormattedDuration() {
     return `${this.array.map((x) => x.value).join(":")}`;
   }
   /**
-   *
-   * @returns {String} dumb string
+   * Extra filler function that returns the class data in a single short string.
+   * @returns {String} Dumb string
    */
   toString() {
     return `[Duration ${this.stringify(["d", "h", "m", "s"], true)}]`;
   }
+  /**
+   * Reads a given string and parses a duration from it.
+   * @param {string} str - A string which could contain a duration 
+   * @returns {Duration}
+   */
   static fromString(str) {
     str = str.replace(/\s\s/g, "");
     const days =
@@ -148,15 +156,19 @@ class Duration {
       milliseconds;
     return new Duration(ts);
   }
+  /**
+   * Get the duration till next midnight in milliseconds.
+   * @returns {Number} Duration in milliseconds till the next midnight 
+   */
   static getCurrentDuration() {
     return new Date().setHours(0, 0, 0, 0);
   }
 }
 
 /**
- *
- * @param {string} string - string to match from
- * @param {string} unit - unit to look for
+ * Match a unit in a string. Like "1kg", "3L", etc.
+ * @param {string} str - String to match from
+ * @param {string} t - Unit to look for. Doesn't support aliases.
  * @returns
  */
 function matchReg(str, t) {
