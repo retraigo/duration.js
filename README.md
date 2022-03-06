@@ -15,7 +15,7 @@ $ pnpm install @retraigo/duration.js # PNPM
 // Node
 import Duration from "@retraigo/duration.js"; 
 // Deno
-import Duration from "https://deno.land/x/durationjs@v2.0.0/index.js"; 
+import Duration from "https://deno.land/x/durationjs@v2.1.3/index.js"; 
 
 const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
 
@@ -27,6 +27,8 @@ new Duration(0); // Just 0
 
 new Duration(-1); // Negative duration returns 0 too
 ```
+
+For CommonJS support with require, download the `index.js` file and replace `export default` with `module.exports = `.
 
 ### From Text
 
