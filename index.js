@@ -7,9 +7,12 @@ const keyList = {
 };
 
 /**
- * Duration class. Yes, Duration. Ain't gonna give it a better name with my crappy naming sense.
+ * @class
+ * @param {Number} time - duration in milliseconds
+ * @returns {Duration}
  */
-export default class Duration {
+
+class Duration {
   constructor(timestamp = Duration.getCurrentDuration()) {
     if (timestamp < 1) timestamp = 0; // Prevent negative time
     this.raw = timestamp;
@@ -19,6 +22,9 @@ export default class Duration {
     this.s = Math.trunc(timestamp / 1000) % 60;
     this.ms = Math.trunc(timestamp) % 1000;
   }
+  /**
+   * @returns {Array}
+   */
   get array() {
     return [
       { type: "d", value: this.d },
@@ -28,6 +34,9 @@ export default class Duration {
       { type: "ms", value: this.ms },
     ];
   }
+  /**
+   * @returns {Object}
+   */
   get json() {
     return this.array.reduce(
       (acc, stuff) => ((acc[stuff.type] = stuff.value), acc),
@@ -36,9 +45,9 @@ export default class Duration {
   }
   /**
    *
-   * @param {Array} values - The values required
+   * @param {Array} values - The values required to display
    * @param {Boolean} shortandsweet - If response should be a short string.
-   * @returns {String}
+   * @returns {String} formatted string
    */
   stringify(values = [], shortandsweet = false) {
     if (!Array.isArray(values) || values.length == 0) {
@@ -71,6 +80,12 @@ export default class Duration {
       .map((x) => `${x.value} ${keyList[x.type]}`)
       .join(", ")}`;
   }
+  /**
+   *
+   * @param {String} from - unit to display from
+   * @param {String} to - unit to display upto
+   * @returns {String} formatted string
+   */
   getFormattedDuration(fromT = "d", toT = "ms") {
     if (
       typeof fromT !== "string" ||
@@ -80,9 +95,8 @@ export default class Duration {
     )
       return this.getSimpleFormattedDuration();
     const durations = [];
-    const next = this.array[
-      this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1
-    ];
+    const next =
+      this.array[this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1];
     for (const obj of this.array) {
       if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
       if (obj.type === next.type) break;
@@ -90,9 +104,17 @@ export default class Duration {
     }
     return durations.join(":");
   }
+  /**
+   *
+   * @returns {String} formatted string
+   */
   getSimpleFormattedDuration() {
     return `${this.array.map((x) => x.value).join(":")}`;
   }
+  /**
+   *
+   * @returns {String} dumb string
+   */
   toString() {
     return `[Duration ${this.stringify(["d", "h", "m", "s"], true)}]`;
   }
@@ -131,6 +153,12 @@ export default class Duration {
   }
 }
 
+/**
+ *
+ * @param {string} string - string to match from
+ * @param {string} unit - unit to look for
+ * @returns
+ */
 function matchReg(str, t) {
   const reg = new RegExp(`(\\d+)\\s?${t}(?:[^a-z]|$)`, "i");
   const matched = reg.exec(str);
@@ -139,3 +167,6 @@ function matchReg(str, t) {
 }
 
 // module.exports = Duration;
+
+export default Duration;
+export { Duration, matchReg as MatchUnit };
