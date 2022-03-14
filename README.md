@@ -111,6 +111,18 @@ new Duration(165684).getSimpleFormattedDuration();
 // `0:0:2:45:684`
 ```
 
+#### reload()
+
+Reload the duration.
+
+```js
+const d = new Duration(6000);
+d.m += 70
+console.log(d) // Only d.m changes. d.h remains the same
+d.reload()
+console.log(d) // d.m turns into 10 and d.h turns into 1
+```
+
 #### get json()
 
 Returns a JavaScript object version of the class with just the main stuff.
