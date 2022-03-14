@@ -153,18 +153,18 @@ class Duration {
    */
   reload() {
     const ts =
-      this.days * 8.64e7 +
-      this.hours * 3600000 +
-      this.minutes * 60000 +
-      this.seconds * 1000 +
-      this.milliseconds;
+      this.d * 8.64e7 +
+      this.h * 3600000 +
+      this.m * 60000 +
+      this.s * 1000 +
+      this.ms;
     if (ts === this.raw) return this;
     const newDuration = new Duration(ts);
-    this.days = newDuration.days;
-    this.hours = newDuration.hours;
-    this.minutes = newDuration.minutes;
-    this.seconds = newDuration.seconds;
-    this.milliseconds = newDuration.milliseconds;
+    this.d = newDuration.d;
+    this.h = newDuration.h;
+    this.m = newDuration.m;
+    this.s = newDuration.s;
+    this.ms = newDuration.ms;
     this.raw = newDuration.raw;
     return this;
   }
