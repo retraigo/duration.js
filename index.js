@@ -67,14 +67,14 @@ class Duration {
       { type: "s", value: this.s },
       { type: "ms", value: this.ms },
       { type: "ns", value: this.ns },
-      { type: "µs", value: this.µs },
+      { type: "us", value: this.µs },
     ];
   }
   /**
    * Alt way to get microseconds
    */
   get µs() {
-    return this.µs;
+    return this.us;
   }
   /**
    * Data in the class mapped as a JavaScript Object.
