@@ -16,7 +16,7 @@ console.log(new Duration(245074).array);
 */
 // console.log(Duration.fromString("5 m s 54h 5d 44 s").stringify([], true))
 
-const d = new Duration(6000);
+const d = new Duration(6000.4353262);
 d.m += 70
 console.log(d) // Only d.m changes. d.h remains the same
 d.reload()
