@@ -149,3 +149,6 @@ new Duration(245074).array;
 */
 ```
 
+
+## Support
+Join our Discord server [here](https://discord.gg/Ess9VJKYEZ)
