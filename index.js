@@ -45,7 +45,7 @@ class Duration {
    * @returns {<Duration>}
    */
   constructor(timestamp = Duration.getCurrentDuration()) {
-    if (timestamp < 1) timestamp = 0; // Prevent negative time
+    if (timestamp < 0) timestamp = 0; // Prevent negative time
     this.raw = timestamp;
     this.d = Math.trunc(timestamp / 86400000);
     this.h = Math.trunc(timestamp / 3600000) % 24;
