@@ -9,8 +9,8 @@ const keyList = {
   m: "minutes",
   s: "seconds",
   ms: "milliseconds",
-  ns: "nanoseconds",
   us: "microseconds",
+  ns: "nanoseconds",
 };
 
 /**
@@ -66,8 +66,8 @@ class Duration {
       { type: "m", value: this.m },
       { type: "s", value: this.s },
       { type: "ms", value: this.ms },
-      { type: "ns", value: this.ns },
       { type: "us", value: this.µs },
+      { type: "ns", value: this.ns },
     ];
   }
   /**
