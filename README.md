@@ -15,7 +15,7 @@ $ pnpm install @retraigo/duration.js # PNPM
 // Node
 import Duration from "@retraigo/duration.js"; 
 // Deno
-import Duration from "https://deno.land/x/durationjs@v2.1.3/index.js"; 
+import Duration from "https://deno.land/x/durationjs@v2.3.2/mod.ts"; 
 
 const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
 
@@ -57,6 +57,8 @@ Duration {
     m: 0, // Minutes
     s: 0, // Seconds
     ms: 0 // Milliseconds
+    us: 0 // Microseconds
+    ns: 0 // Nanoseconds
 };
 ```
 
