@@ -178,7 +178,7 @@ export class Duration {
    */
   getFormattedDuration(
     fromT: DurationKeys = "d",
-    toT: DurationKeys = "us",
+    toT: DurationKeys = "ns",
   ): string {
     if (
       typeof fromT !== "string" ||
@@ -189,12 +189,11 @@ export class Duration {
       return this.getSimpleFormattedDuration();
     }
     const durations = [];
-    const next =
-      this.array[this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1];
+    const nextIndex = this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1
+    const next = this.array[nextIndex];
     for (const obj of this.array) {
       if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
-      if (!next) break;
-      if (obj.type === next.type) break;
+      if (obj.type === next?.type) break;
       durations.push(obj.value);
     }
     return durations.join(":");
