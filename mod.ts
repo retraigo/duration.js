@@ -183,8 +183,8 @@ export class Duration {
     if (
       typeof fromT !== "string" ||
       typeof toT !== "string" ||
-      !Object.hasOwn(keyList, fromT.toLowerCase()) ||
-      !Object.hasOwn(keyList, toT.toLowerCase())
+      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
+      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
     ) {
       return this.getSimpleFormattedDuration();
     }
