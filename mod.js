@@ -102,17 +102,17 @@ class Duration {
         return `${this.array.map((x)=>`${x.value} ${keyList[x.type]}`
         ).join(", ")}`;
     }
-    getFormattedDuration(fromT = "d", toT = "us") {
+    getFormattedDuration(fromT = "d", toT = "ns") {
         if (typeof fromT !== "string" || typeof toT !== "string" || !Object.hasOwn(keyList, fromT.toLowerCase()) || !Object.hasOwn(keyList, toT.toLowerCase())) {
             return this.getSimpleFormattedDuration();
         }
         const durations = [];
-        const next = this.array[this.array.findIndex((x)=>x.type === toT.toLowerCase()
-        ) + 1];
+        const nextIndex = this.array.findIndex((x)=>x.type === toT.toLowerCase()
+        ) + 1;
+        const next = this.array[nextIndex];
         for (const obj of this.array){
             if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
-            if (!next) break;
-            if (obj.type === next.type) break;
+            if (obj.type === next?.type) break;
             durations.push(obj.value);
         }
         return durations.join(":");
