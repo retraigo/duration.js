@@ -103,7 +103,7 @@ class Duration {
         ).join(", ")}`;
     }
     getFormattedDuration(fromT = "d", toT = "ns") {
-        if (typeof fromT !== "string" || typeof toT !== "string" || !Object.hasOwn(keyList, fromT.toLowerCase()) || !Object.hasOwn(keyList, toT.toLowerCase())) {
+        if (typeof fromT !== "string" || typeof toT !== "string" || !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) || !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())) {
             return this.getSimpleFormattedDuration();
         }
         const durations = [];
