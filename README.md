@@ -1,5 +1,8 @@
 # duration.js
 
+## Documentation
+Check out [Neko Of The Abyss](https://docs.nekooftheabyss.moe) for documentation.
+
 ## Installation
 
 ```bash
@@ -153,4 +156,4 @@ new Duration(245074).array;
 
 
 ## Support
-Join our Discord server [here](https://discord.gg/Ess9VJKYEZ)
+Join our Discord server [here](https://discord.gg/A69vvdK)
