@@ -14,9 +14,11 @@ console.log(new Duration(114750).json);
 console.log(new Duration(245074).array);
 
 */
-
-console.log(Duration.fromString("5 m s 54h 5d 44 s 34µs;").getFormattedDuration('h', 'ns'));
-
+const a = new Duration(0)
+console.log(a.setHours(10))
+console.log(a.setMicroseconds(34344334))
+console.log(a.addMinutes(100))
+console.log(a.getFormattedDuration('o', 'regfdg'))
 /*
 const d = new Duration(6000.4353262);
 console.log(d.µs)
