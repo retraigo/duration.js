@@ -80,8 +80,8 @@ export class Duration {
   us: number;
   ns: number;
   /**
-   * Create a new Duration
-   * @param {number} timestamp - Duration in milliseconds
+   * Parse milliseconds into separate units of time.
+   * @param {number} timestamp - Milliseconds to parse into a duration object.
    * @returns {<Duration>}
    */
   constructor(timestamp: number = Duration.getCurrentDuration()) {
@@ -96,7 +96,7 @@ export class Duration {
     this.ns = Math.trunc(timestamp * 1000000) % 1000;
   }
   /**
-   * Data in the class mapped into an Array with properties "type" and "value"
+   * An array of time units and their values.
    * @returns {KeyValue[]}
    */
   get array(): KeyValue[] {
@@ -111,7 +111,7 @@ export class Duration {
     ];
   }
   /**
-   * Alt way to get microseconds
+   * Alias for microseconds.
    */
   get µs(): number {
     return this.us;
@@ -127,9 +127,138 @@ export class Duration {
     );
   }
   /**
-   * @param {string[]} values - The values required to display
+   * Add more days to the duration.
+   * @param {number} n - Number of days to add.
+   * @returns {Duration} The updated duration.
+   */
+  addDays(n: number): Duration {
+    this.d += n;
+    return this.reload();
+  }
+  /**
+   * Add more hours to the duration.
+   * @param {number} n - Number of hours to add.
+   * @returns {Duration} The updated duration.
+   */
+  addHours(n: number): Duration {
+    this.h += n;
+    return this.reload();
+  }
+  /**
+   * Add more minutes to the duration.
+   * @param {number} n - Number of minutes to add.
+   * @returns {Duration} The updated duration.
+   */
+  addMinutes(n: number): Duration {
+    this.m += n;
+    return this.reload();
+  }
+  /**
+   * Add more seconds to the duration.
+   * @param {number} n - Number of seconds to add.
+   * @returns {Duration} The updated duration.
+   */
+  addSeconds(n: number): Duration {
+    this.s += n;
+    return this.reload();
+  }
+  /**
+   * Add more milliseconds to the duration.
+   * @param {number} n - Number of milliseconds to add.
+   * @returns {Duration} The updated duration.
+   */
+  addMilliseconds(n: number): Duration {
+    this.ms += n;
+    return this.reload();
+  }
+  /**
+   * Add more microseconds to the duration.
+   * @param {number} n - Number of microseconds to add.
+   * @returns {Duration} The updated duration.
+   */
+  addMicroseconds(n: number): Duration {
+    this.us += n;
+    return this.reload();
+  }
+  /**
+   * Add more nanoseconds to the duration.
+   * @param {number} n - Number of nanoseconds to add.
+   * @returns {Duration} The updated duration.
+   */
+  addNanoseconds(n: number): Duration {
+    this.ns += n;
+    return this.reload();
+  }
+
+  /**
+   * Set days of the duration.
+   * @param {number} n - Number of days to set.
+   * @returns {Duration} The updated duration.
+   */
+  setDays(n: number): Duration {
+    this.d = n;
+    return this.reload();
+  }
+  /**
+   * Set hours of the duration.
+   * @param {number} n - Number of hours to set.
+   * @returns {Duration} The updated duration.
+   */
+  setHours(n: number): Duration {
+    this.h = n;
+    return this.reload();
+  }
+  /**
+   * Set minutes of the duration.
+   * @param {number} n - Number of minutes to set.
+   * @returns {Duration} The updated duration.
+   */
+  setMinutes(n: number): Duration {
+    this.m = n;
+    return this.reload();
+  }
+  /**
+   * Set seconds of the duration.
+   * @param {number} n - Number of seconds to set.
+   * @returns {Duration} The updated duration.
+   */
+  setSeconds(n: number): Duration {
+    this.s = n;
+    return this.reload();
+  }
+  /**
+   * Set milliseconds of the duration.
+   * @param {number} n - Number of milliseconds to set.
+   * @returns {Duration} The updated duration.
+   */
+  setMilliseconds(n: number): Duration {
+    this.ms = n;
+    return this.reload();
+  }
+  /**
+   * Set microseconds of the duration.
+   * @param {number} n - Number of microseconds to set.
+   * @returns {Duration} The updated duration.
+   */
+  setMicroseconds(n: number): Duration {
+    this.us = n;
+    return this.reload();
+  }
+  /**
+   * Set nanoseconds of the duration.
+   * @param {number} n - Number of nanoseconds to set.
+   * @returns {Duration} The updated duration.
+   */
+  setNanoseconds(n: number): Duration {
+    this.ns = n;
+    return this.reload();
+  }
+
+  /**
+   * Get a formatted, human-readable string of the duration.
+   * @param {string[]} values - The values required to display.
    * @param {boolean} shortandsweet - If response should be a short string.
-   * @returns {string} formatted string - The formatted string result
+   * @returns {string} formatted string - The formatted string result.
    */
   stringify(values: string[] = [], shortandsweet = false): string {
     if (!Array.isArray(values) || values.length == 0) {
@@ -171,10 +300,10 @@ export class Duration {
     }`;
   }
   /**
-   * Get a duration formatted using colons (:)
-   * @param {string} fromT - Unit to display from
-   * @param {string} toT - Unit to display upto
-   * @returns {string} Formatted string
+   * Get a duration formatted using colons (:).
+   * @param {string} fromT - Unit to display from.
+   * @param {string} toT - Unit to display upto.
+   * @returns {string} Formatted string.
    */
   getFormattedDuration(
     fromT: DurationKeys = "d",
@@ -189,12 +318,13 @@ export class Duration {
       return this.getSimpleFormattedDuration();
     }
     const durations = [];
-    const nextIndex = this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1
+    const nextIndex =
+      this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1;
     const next = this.array[nextIndex];
     for (const obj of this.array) {
       if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
       if (obj.type === next?.type) break;
-      durations.push(obj.value);
+      durations.push(["ms", "us", "ns"].includes(obj.type) ? addZero(obj.value, 3) : obj.type === "d" ? obj.value : addZero(obj.value, 2));
     }
     return durations.join(":");
   }
@@ -213,7 +343,7 @@ export class Duration {
     return `[Duration ${this.stringify(["d", "h", "m", "s"], true)}]`;
   }
   /**
-   * Updated data to match any modification to values.
+   * Update data to match any modification to values.
    * @returns {<Duration>}
    */
   reload(): Duration {
@@ -263,7 +393,7 @@ export class Duration {
    * @returns {number} Duration in milliseconds till the next midnight
    */
   static getCurrentDuration(): number {
-    return new Date().setHours(0, 0, 0, 0);
+    return Date.now() - new Date().setHours(0, 0, 0, 0);
   }
   /**
    * Read duration data from a string.
@@ -320,6 +450,12 @@ function matchReg(str: string, t: string): number {
   if (!matched) return 0;
   return parseInt(matched[1].replace(t, ""));
 }
+
+
+function addZero(num: number, digits = 3): string {
+  const arr = new Array(digits).fill(0);
+  return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
+};
 
 // module.exports = Duration;
 

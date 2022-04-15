@@ -80,6 +80,62 @@ class Duration {
         return this.array.reduce((acc, stuff)=>(acc[stuff.type] = stuff.value, acc)
         , BaseDurationObj);
     }
+    addDays(n) {
+        this.d += n;
+        return this.reload();
+    }
+    addHours(n) {
+        this.h += n;
+        return this.reload();
+    }
+    addMinutes(n) {
+        this.m += n;
+        return this.reload();
+    }
+    addSeconds(n) {
+        this.s += n;
+        return this.reload();
+    }
+    addMilliseconds(n) {
+        this.ms += n;
+        return this.reload();
+    }
+    addMicroseconds(n) {
+        this.us += n;
+        return this.reload();
+    }
+    addNanoseconds(n) {
+        this.ns += n;
+        return this.reload();
+    }
+    setDays(n) {
+        this.d = n;
+        return this.reload();
+    }
+    setHours(n) {
+        this.h = n;
+        return this.reload();
+    }
+    setMinutes(n) {
+        this.m = n;
+        return this.reload();
+    }
+    setSeconds(n) {
+        this.s = n;
+        return this.reload();
+    }
+    setMilliseconds(n) {
+        this.ms = n;
+        return this.reload();
+    }
+    setMicroseconds(n) {
+        this.us = n;
+        return this.reload();
+    }
+    setNanoseconds(n) {
+        this.ns = n;
+        return this.reload();
+    }
     stringify(values = [], shortandsweet = false) {
         if (!Array.isArray(values) || values.length == 0) {
             if (!shortandsweet || typeof shortandsweet !== "boolean") {
@@ -113,7 +169,11 @@ class Duration {
         for (const obj of this.array){
             if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
             if (obj.type === next?.type) break;
-            durations.push(obj.value);
+            durations.push([
+                "ms",
+                "us",
+                "ns"
+            ].includes(obj.type) ? addZero(obj.value, 3) : obj.type === "d" ? obj.value : addZero(obj.value, 2));
         }
         return durations.join(":");
     }
@@ -159,7 +219,7 @@ class Duration {
         return newDuration;
     }
     static getCurrentDuration() {
-        return new Date().setHours(0, 0, 0, 0);
+        return Date.now() - new Date().setHours(0, 0, 0, 0);
     }
     static readString(str) {
         str = str.replace(/\s\s/g, "");
@@ -187,6 +247,10 @@ function matchReg(str, t) {
     const matched = reg.exec(str);
     if (!matched) return 0;
     return parseInt(matched[1].replace(t, ""));
+}
+function addZero(num, digits = 3) {
+    const arr = new Array(digits).fill(0);
+    return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
 }
 export { matchReg as MatchUnit };
 export { Duration as Duration };
