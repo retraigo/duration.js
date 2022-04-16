@@ -460,4 +460,4 @@ function addZero(num: number, digits = 3): string {
 // module.exports = Duration;
 
 export default Duration;
-export { matchReg as MatchUnit };
+export { matchReg as MatchUnit, addZero as AddZero };
