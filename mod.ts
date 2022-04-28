@@ -324,7 +324,13 @@ export class Duration {
     for (const obj of this.array) {
       if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
       if (obj.type === next?.type) break;
-      durations.push(["ms", "us", "ns"].includes(obj.type) ? addZero(obj.value, 3) : obj.type === "d" ? obj.value : addZero(obj.value, 2));
+      durations.push(
+        ["ms", "us", "ns"].includes(obj.type)
+          ? addZero(obj.value, 3)
+          : obj.type === "d"
+          ? obj.value
+          : addZero(obj.value, 2),
+      );
     }
     return durations.join(":");
   }
@@ -341,6 +347,13 @@ export class Duration {
    */
   toString(): string {
     return `[Duration ${this.stringify(["d", "h", "m", "s"], true)}]`;
+  }
+  /**
+   * Just the valueOf method.
+   * @returns {number} Raw milliseconds of the duration
+   */
+  valueOf(): number {
+    return this.raw;
   }
   /**
    * Update data to match any modification to values.
@@ -363,6 +376,41 @@ export class Duration {
     this.us = newDuration.us;
     this.raw = newDuration.raw;
     return this;
+  }
+  /**
+   * Get the duration between two timestamps or two other durations.
+   * @param {string|number|Duration} duration1 - Duration/Timestamp to find duration from.
+   * @param {string|number|Duration} duration2 - Duration/Timestamp to find duration upto.
+   * @returns {Duration} New duration between the two specified durations.
+   */
+  static between(
+    duration1: string | number | Duration,
+    duration2: string | number | Duration,
+  ): Duration {
+    let myDuration1: Duration, myDuration2: Duration;
+    // Duration 1
+    if (duration1 instanceof Duration) myDuration1 = duration1;
+    else if (typeof duration1 === "string") {
+      if (isNaN(+duration1)) myDuration1 = Duration.fromString(duration1);
+      else myDuration1 = new Duration(+duration1);
+    } else if (typeof duration1 === "number") {
+      myDuration1 = new Duration(duration1);
+    } else myDuration1 = new Duration();
+    // Duration 2
+    if (duration2 instanceof Duration) myDuration2 = duration2;
+    else if (typeof duration2 === "string") {
+      if (isNaN(+duration2)) myDuration2 = Duration.fromString(duration2);
+      else myDuration2 = new Duration(+duration2);
+    } else if (typeof duration2 === "number") {
+      myDuration2 = new Duration(duration2);
+    } else myDuration2 = new Duration();
+
+    // Doing stuff
+    return new Duration(
+      myDuration1.raw > myDuration2.raw
+        ? myDuration1.raw - myDuration2.raw
+        : myDuration2.raw - myDuration1.raw,
+    );
   }
   /**
    * Reads a given string and parses a duration from it.
@@ -451,13 +499,12 @@ function matchReg(str: string, t: string): number {
   return parseInt(matched[1].replace(t, ""));
 }
 
-
 function addZero(num: number, digits = 3): string {
   const arr = new Array(digits).fill(0);
   return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
-};
+}
 
 // module.exports = Duration;
 
 export default Duration;
-export { matchReg as MatchUnit, addZero as AddZero };
+export { addZero as AddZero, matchReg as MatchUnit };
