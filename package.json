@@ -1,12 +1,13 @@
 {
   "name": "@retraigo/duration.js",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "type": "module",
   "description": "Get the formatted time duration",
   "main": "mod.js",
   "scripts": {
     "test": "node test"
   },
+  "typings": "./types.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/retraigo/duration.js.git"
@@ -14,7 +15,10 @@
   "keywords": [
     "duration",
     "time",
-    "timestamp"
+    "timestamp",
+    "node",
+    "deno",
+    "typescript"
   ],
   "author": "retraigo",
   "license": "MIT",
