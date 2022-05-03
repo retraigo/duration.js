@@ -385,7 +385,7 @@ export class Duration {
    */
   static between(
     duration1: string | number | Duration,
-    duration2: string | number | Duration,
+    duration2: string | number | Duration | undefined | null,
   ): Duration {
     let myDuration1: Duration, myDuration2: Duration;
     // Duration 1
