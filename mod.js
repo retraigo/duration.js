@@ -189,6 +189,9 @@ class Duration {
             "s"
         ], true)}]`;
     }
+    valueOf() {
+        return this.raw;
+    }
     reload() {
         const ts = this.d * 86400000 + this.h * 3600000 + this.m * 60000 + this.s * 1000 + this.ms + this.us / 1000 + this.ns / 1000000;
         if (ts === this.raw) return this;
@@ -202,6 +205,24 @@ class Duration {
         this.us = newDuration.us;
         this.raw = newDuration.raw;
         return this;
+    }
+    static between(duration1, duration2) {
+        let myDuration1, myDuration2;
+        if (duration1 instanceof Duration) myDuration1 = duration1;
+        else if (typeof duration1 === "string") {
+            if (isNaN(+duration1)) myDuration1 = Duration.fromString(duration1);
+            else myDuration1 = new Duration(+duration1);
+        } else if (typeof duration1 === "number") {
+            myDuration1 = new Duration(duration1);
+        } else myDuration1 = new Duration();
+        if (duration2 instanceof Duration) myDuration2 = duration2;
+        else if (typeof duration2 === "string") {
+            if (isNaN(+duration2)) myDuration2 = Duration.fromString(duration2);
+            else myDuration2 = new Duration(+duration2);
+        } else if (typeof duration2 === "number") {
+            myDuration2 = new Duration(duration2);
+        } else myDuration2 = new Duration();
+        return new Duration(myDuration1.raw > myDuration2.raw ? myDuration1.raw - myDuration2.raw : myDuration2.raw - myDuration1.raw);
     }
     static fromString(str, doNotParse = false) {
         const { d , h , m , s , ms , ns , us  } = Duration.readString(str);
@@ -252,6 +273,6 @@ function addZero(num, digits = 3) {
     const arr = new Array(digits).fill(0);
     return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
 }
-export { matchReg as MatchUnit };
+export { addZero as AddZero, matchReg as MatchUnit };
 export { Duration as Duration };
 export { Duration as default };
