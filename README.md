@@ -3,6 +3,8 @@
 ## Documentation
 Check out [Neko Of The Abyss](https://docs.nekooftheabyss.moe) for documentation.
 
+Duration follows the `performance.now()` format, so microseconds and nanoseconds go after the decimal point.
+
 ## Installation
 
 ```bash
