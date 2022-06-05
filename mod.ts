@@ -86,6 +86,7 @@ export class Duration {
    */
   constructor(timestamp: number = Duration.getCurrentDuration()) {
     if (timestamp < 0) timestamp = 0; // Prevent negative time
+    timestamp = Number(timestamp);
     this.raw = timestamp;
     this.d = Math.trunc(timestamp / 86400000);
     this.h = Math.trunc(timestamp / 3600000) % 24;
@@ -317,9 +318,12 @@ export class Duration {
     ) {
       return this.getSimpleFormattedDuration();
     }
-    const durations = this.getFormattedDurationArray()
-    const listOfKeys = Object.keys(keyList)
-    return durations.slice(listOfKeys.indexOf(fromT), listOfKeys.indexOf(toT) + 1).join(":");
+    const durations = this.getFormattedDurationArray();
+    const listOfKeys = Object.keys(keyList);
+    return durations.slice(
+      listOfKeys.indexOf(fromT),
+      listOfKeys.indexOf(toT) + 1,
+    ).join(":");
   }
   /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms
@@ -329,7 +333,11 @@ export class Duration {
     return `${this.getFormattedDurationArray().join(":")}`;
   }
   getFormattedDurationArray(): string[] {
-    return this.array.map((x) => ["ms", "us", "ns"].includes(x.type) ? addZero(x.value, 3) : addZero(x.value, 2))
+    return this.array.map((x) =>
+      ["ms", "us", "ns"].includes(x.type)
+        ? addZero(x.value, 3)
+        : addZero(x.value, 2)
+    );
   }
   /**
    * Extra filler function that returns the class data in a single short string.
