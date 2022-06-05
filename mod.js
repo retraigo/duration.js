@@ -32,6 +32,7 @@ class Duration {
     ns;
     constructor(timestamp = Duration.getCurrentDuration()){
         if (timestamp < 0) timestamp = 0;
+        timestamp = Number(timestamp);
         this.raw = timestamp;
         this.d = Math.trunc(timestamp / 86400000);
         this.h = Math.trunc(timestamp / 3600000) % 24;
@@ -65,7 +66,7 @@ class Duration {
             },
             {
                 type: "us",
-                value: this.µs
+                value: this.us
             },
             {
                 type: "ns",
@@ -107,6 +108,42 @@ class Duration {
     addNanoseconds(n) {
         this.ns += n;
         return this.reload();
+    }
+    clone() {
+        return new Duration(this.raw);
+    }
+    getFormattedDuration(fromT = "d", toT = "ns") {
+        if (typeof fromT !== "string" || typeof toT !== "string" || !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) || !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())) {
+            return this.getSimpleFormattedDuration();
+        }
+        const durations = this.getFormattedDurationArray();
+        const listOfKeys = Object.keys(keyList);
+        return durations.slice(listOfKeys.indexOf(fromT), listOfKeys.indexOf(toT) + 1).join(":");
+    }
+    getSimpleFormattedDuration() {
+        return this.toString();
+    }
+    getFormattedDurationArray() {
+        return this.array.map((x)=>[
+                "ms",
+                "us",
+                "ns"
+            ].includes(x.type) ? addZero(x.value, 3) : addZero(x.value, 2)
+        );
+    }
+    reload() {
+        const ts = this.d * 86400000 + this.h * 3600000 + this.m * 60000 + this.s * 1000 + this.ms + this.us / 1000 + this.ns / 1000000;
+        if (ts === this.raw) return this;
+        const newDuration = new Duration(ts);
+        this.d = newDuration.d;
+        this.h = newDuration.h;
+        this.m = newDuration.m;
+        this.s = newDuration.s;
+        this.ms = newDuration.ms;
+        this.ns = newDuration.ns;
+        this.us = newDuration.us;
+        this.raw = newDuration.raw;
+        return this;
     }
     setDays(n) {
         this.d = n;
@@ -158,53 +195,14 @@ class Duration {
         return `${this.array.map((x)=>`${x.value} ${keyList[x.type]}`
         ).join(", ")}`;
     }
-    getFormattedDuration(fromT = "d", toT = "ns") {
-        if (typeof fromT !== "string" || typeof toT !== "string" || !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) || !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())) {
-            return this.getSimpleFormattedDuration();
-        }
-        const durations = [];
-        const nextIndex = this.array.findIndex((x)=>x.type === toT.toLowerCase()
-        ) + 1;
-        const next = this.array[nextIndex];
-        for (const obj of this.array){
-            if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
-            if (obj.type === next?.type) break;
-            durations.push([
-                "ms",
-                "us",
-                "ns"
-            ].includes(obj.type) ? addZero(obj.value, 3) : obj.type === "d" ? obj.value : addZero(obj.value, 2));
-        }
-        return durations.join(":");
-    }
-    getSimpleFormattedDuration() {
-        return `${this.array.map((x)=>x.value
-        ).join(":")}`;
-    }
     toString() {
-        return `[Duration ${this.stringify([
-            "d",
-            "h",
-            "m",
-            "s"
-        ], true)}]`;
+        return `${this.getFormattedDurationArray().join(":")}`;
+    }
+    toJSON() {
+        return this.json;
     }
     valueOf() {
         return this.raw;
-    }
-    reload() {
-        const ts = this.d * 86400000 + this.h * 3600000 + this.m * 60000 + this.s * 1000 + this.ms + this.us / 1000 + this.ns / 1000000;
-        if (ts === this.raw) return this;
-        const newDuration = new Duration(ts);
-        this.d = newDuration.d;
-        this.h = newDuration.h;
-        this.m = newDuration.m;
-        this.s = newDuration.s;
-        this.ms = newDuration.ms;
-        this.ns = newDuration.ns;
-        this.us = newDuration.us;
-        this.raw = newDuration.raw;
-        return this;
     }
     static between(duration1, duration2) {
         let myDuration1, myDuration2;
@@ -225,8 +223,8 @@ class Duration {
         return new Duration(myDuration1.raw > myDuration2.raw ? myDuration1.raw - myDuration2.raw : myDuration2.raw - myDuration1.raw);
     }
     static fromString(str, doNotParse = false) {
-        const { d , h , m , s , ms , ns , us  } = Duration.readString(str);
-        const ts = d * 86400000 + h * 3600000 + m * 60000 + s * 1000 + ms + us / 1000 + ns / 1000000;
+        const { raw , d , h , m , s , ms , ns , us  } = Duration.readString(str);
+        const ts = raw;
         const newDuration = new Duration(ts);
         if (doNotParse) {
             newDuration.d = d;
@@ -253,6 +251,7 @@ class Duration {
         const microseconds = matchReg(str, "µs") || matchReg(str, "microsecond") || matchReg(str, "microseconds");
         matchReg(str, "us");
         return {
+            raw: days * 86400000 + hours * 3600000 + minutes * 60000 + seconds * 1000 + milliseconds + microseconds / 1000 + nanoseconds / 1000000,
             d: days,
             h: hours,
             m: minutes,
@@ -261,6 +260,9 @@ class Duration {
             ns: nanoseconds,
             us: microseconds
         };
+    }
+    static since(when) {
+        return Duration.between(when instanceof Date ? when.getMilliseconds() : when, null);
     }
 }
 function matchReg(str, t) {
