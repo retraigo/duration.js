@@ -419,10 +419,8 @@ export class Duration {
    * @returns {<Duration>}
    */
   static fromString(str: string, doNotParse = false): Duration {
-    const { d, h, m, s, ms, ns, us } = Duration.readString(str);
-    const ts = d * 8.64e7 + h * 3600000 + m * 60000 + s * 1000 + ms +
-      (us / 1000) +
-      (ns / 1000000);
+    const { raw, d, h, m, s, ms, ns, us } = Duration.readString(str);
+    const ts = raw;
 
     const newDuration = new Duration(ts);
     if (doNotParse) {
@@ -448,7 +446,7 @@ export class Duration {
    * @param {string} str - The string to read
    * @returns {DurationObj} obj - Object with days, hours, mins, seconds and milliseconds
    */
-  static readString(str: string) {
+  static readString(str: string): DurationObj {
     str = str.replace(/\s\s/g, "");
     const days = matchReg(str, "d") || matchReg(str, "days") ||
       matchReg(str, "day");
@@ -475,6 +473,10 @@ export class Duration {
       matchReg(str, "microseconds");
     matchReg(str, "us");
     return {
+      raw: days * 8.64e7 + hours * 3600000 + minutes * 60000 + seconds * 1000 +
+        milliseconds +
+        (microseconds / 1000) +
+        (nanoseconds / 1000000),
       d: days,
       h: hours,
       m: minutes,
@@ -483,6 +485,17 @@ export class Duration {
       ns: nanoseconds,
       us: microseconds,
     };
+  }
+  /**
+   * Get duration since a moment in time.
+   * @param {Date|number} when
+   * @returns {Duration} Duration
+   */
+  static since(when: number | Date): Duration {
+    return Duration.between(
+      when instanceof Date ? when.getMilliseconds() : when,
+      null,
+    );
   }
 }
 
