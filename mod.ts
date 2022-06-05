@@ -192,6 +192,67 @@ export class Duration {
   }
 
   /**
+   * Get a duration formatted using colons (:).
+   * @param {string} fromT - Unit to display from.
+   * @param {string} toT - Unit to display upto.
+   * @returns {string} Formatted string.
+   */
+  getFormattedDuration(
+    fromT: DurationKeys = "d",
+    toT: DurationKeys = "ns",
+  ): string {
+    if (
+      typeof fromT !== "string" ||
+      typeof toT !== "string" ||
+      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
+      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
+    ) {
+      return this.getSimpleFormattedDuration();
+    }
+    const durations = this.getFormattedDurationArray();
+    const listOfKeys = Object.keys(keyList);
+    return durations.slice(
+      listOfKeys.indexOf(fromT),
+      listOfKeys.indexOf(toT) + 1,
+    ).join(":");
+  }
+  /**
+   * Get a simple formatted duration in the form dd:hh:mm:ss:ms (Deprecated. Use Duration#toString())
+   * @returns {string} Formatted string
+   */
+  getSimpleFormattedDuration(): string {
+    return this.toString();
+  }
+  getFormattedDurationArray(): string[] {
+    return this.array.map((x) =>
+      ["ms", "us", "ns"].includes(x.type)
+        ? addZero(x.value, 3)
+        : addZero(x.value, 2)
+    );
+  }
+  /**
+   * Update data to match any modification to values.
+   * @returns {<Duration>}
+   */
+  reload(): Duration {
+    const ts = this.d * 8.64e7 +
+      this.h * 3600000 +
+      this.m * 60000 +
+      this.s * 1000 +
+      this.ms + (this.us / 1000) + (this.ns / 1000000);
+    if (ts === this.raw) return this;
+    const newDuration = new Duration(ts);
+    this.d = newDuration.d;
+    this.h = newDuration.h;
+    this.m = newDuration.m;
+    this.s = newDuration.s;
+    this.ms = newDuration.ms;
+    this.ns = newDuration.ns;
+    this.us = newDuration.us;
+    this.raw = newDuration.raw;
+    return this;
+  }
+  /**
    * Set days of the duration.
    * @param {number} n - Number of days to set.
    * @returns {Duration} The updated duration.
@@ -301,50 +362,18 @@ export class Duration {
     }`;
   }
   /**
-   * Get a duration formatted using colons (:).
-   * @param {string} fromT - Unit to display from.
-   * @param {string} toT - Unit to display upto.
-   * @returns {string} Formatted string.
-   */
-  getFormattedDuration(
-    fromT: DurationKeys = "d",
-    toT: DurationKeys = "ns",
-  ): string {
-    if (
-      typeof fromT !== "string" ||
-      typeof toT !== "string" ||
-      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
-      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
-    ) {
-      return this.getSimpleFormattedDuration();
-    }
-    const durations = this.getFormattedDurationArray();
-    const listOfKeys = Object.keys(keyList);
-    return durations.slice(
-      listOfKeys.indexOf(fromT),
-      listOfKeys.indexOf(toT) + 1,
-    ).join(":");
-  }
-  /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms
    * @returns {string} Formatted string
    */
-  getSimpleFormattedDuration(): string {
+  toString(): string {
     return `${this.getFormattedDurationArray().join(":")}`;
   }
-  getFormattedDurationArray(): string[] {
-    return this.array.map((x) =>
-      ["ms", "us", "ns"].includes(x.type)
-        ? addZero(x.value, 3)
-        : addZero(x.value, 2)
-    );
-  }
   /**
-   * Extra filler function that returns the class data in a single short string.
-   * @returns {string} Dumb string
+   * Convert the Duration into a plain object.
+   * @returns {DurationObj} Duration object
    */
-  toString(): string {
-    return `[Duration ${this.stringify(["d", "h", "m", "s"], true)}]`;
+  toJSON(): DurationObj {
+    return this.json;
   }
   /**
    * Just the valueOf method.
@@ -352,28 +381,6 @@ export class Duration {
    */
   valueOf(): number {
     return this.raw;
-  }
-  /**
-   * Update data to match any modification to values.
-   * @returns {<Duration>}
-   */
-  reload(): Duration {
-    const ts = this.d * 8.64e7 +
-      this.h * 3600000 +
-      this.m * 60000 +
-      this.s * 1000 +
-      this.ms + (this.us / 1000) + (this.ns / 1000000);
-    if (ts === this.raw) return this;
-    const newDuration = new Duration(ts);
-    this.d = newDuration.d;
-    this.h = newDuration.h;
-    this.m = newDuration.m;
-    this.s = newDuration.s;
-    this.ms = newDuration.ms;
-    this.ns = newDuration.ns;
-    this.us = newDuration.us;
-    this.raw = newDuration.raw;
-    return this;
   }
   /**
    * Get the duration between two timestamps or two other durations.
