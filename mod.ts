@@ -106,7 +106,7 @@ export class Duration {
       { type: "m", value: this.m },
       { type: "s", value: this.s },
       { type: "ms", value: this.ms },
-      { type: "us", value: this.µs },
+      { type: "us", value: this.us },
       { type: "ns", value: this.ns },
     ];
   }
@@ -317,29 +317,19 @@ export class Duration {
     ) {
       return this.getSimpleFormattedDuration();
     }
-    const durations = [];
-    const nextIndex =
-      this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1;
-    const next = this.array[nextIndex];
-    for (const obj of this.array) {
-      if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
-      if (obj.type === next?.type) break;
-      durations.push(
-        ["ms", "us", "ns"].includes(obj.type)
-          ? addZero(obj.value, 3)
-          : obj.type === "d"
-          ? obj.value
-          : addZero(obj.value, 2),
-      );
-    }
-    return durations.join(":");
+    const durations = this.getFormattedDurationArray()
+    const listOfKeys = Object.keys(keyList)
+    return durations.slice(listOfKeys.indexOf(fromT), listOfKeys.indexOf(toT) + 1).join(":");
   }
   /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms
    * @returns {string} Formatted string
    */
   getSimpleFormattedDuration(): string {
-    return `${this.array.map((x) => x.value).join(":")}`;
+    return `${this.getFormattedDurationArray().join(":")}`;
+  }
+  getFormattedDurationArray(): string[] {
+    return this.array.map((x) => ["ms", "us", "ns"].includes(x.type) ? addZero(x.value, 3) : addZero(x.value, 2))
   }
   /**
    * Extra filler function that returns the class data in a single short string.
