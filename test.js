@@ -1,36 +1,26 @@
-import {Duration} from "./mod.ts";
+import { Duration } from "./mod.js"
 
-/*
-const dur = new Duration(177013); // A random duration
+console.debug(`Testing duration with Normal number`, new Duration(923))
 
-console.log(dur);
-console.log(new Duration(261174).toString());
+console.debug(`Testing duration with 0`, new Duration(0))
 
-console.log(new Duration(165684).stringify());
-console.log(new Duration(165684).stringify(["s", "h"]));
+console.debug(`Testing duration with BigInt`, new Duration(BigInt(923)))
 
-console.log(new Duration(114750).json);
+console.debug(`Testing duration with Negative number`, new Duration(-923))
 
-console.log(new Duration(245074).array);
-const a = new Duration(0)
-console.log(a.setHours(10))
-console.log(a.setMicroseconds(34344334))
-console.log(a.addMinutes(100))
+console.debug(`Starting to test speed...`)
+console.time("Speed Test")
+const a = new Duration(0);
+console.timeLog("Speed Test", "Initiated Duration", "-", `${performance.now()}ms`)
+for(let i = 0; i < 1000000; ++i) {
+    a.addSeconds(1);
+}
+console.timeLog("Speed Test", "Ran addSeconds 1000000 times.", "-", `${performance.now()}ms`)
+const b = a.clone()
+console.timeLog("Speed Test", "Cloned the duration.", "-", `${performance.now()}ms`)
+console.timeEnd("Speed Test", "-", `${performance.now()}ms`)
+console.debug("Stringifying Test:", "Words:", b.stringify())
+console.debug("Stringifying Test:", "Short:", b.stringify([], true));
+console.debug("Stringifying Test:", "Shorter:", b.toString())
 
-
-*/
-
-const a = new Duration(0).setHours(10).setMicroseconds(34344334).addMinutes(100)
-const b = new Duration(0).setHours(13).setMicroseconds(3434344334).addMinutes(160)
-
-console.log(b.raw, a.raw, b.raw - a.raw, b - a, Duration.between(b - a), new Duration(b - a), b > a, a > b)
-
-
-/*
-const d = new Duration(6000.4353262);
-console.log(d.µs)
-d.m += 70;
-console.log(d); // Only d.m changes. d.h remains the same
-d.reload();
-console.log(d); // d.m turns into 10 and d.h turns into 1
-*/
+console.debug("Parsing Test:", JSON.stringify(b))

@@ -3,6 +3,8 @@
 ## Documentation
 Check out [Neko Of The Abyss](https://docs.nekooftheabyss.moe) for documentation.
 
+Duration follows the `performance.now()` format, so microseconds and nanoseconds go after the decimal point.
+
 ## Installation
 
 ```bash
@@ -79,7 +81,7 @@ new Duration(261174).toString();
 #### stringify([values] [,short])
 
 `stringify()` returns a formatted string of the duration object. It has two optional parameters.
-`values` - An array of values to include. Should be one of `['d', 'h', 'm', 's', 'ms']`. Defaults to the array I mentioned a few words ago.
+`values` - An array of values to include. Should be one of `['d', 'h', 'm', 's', 'ms']`. Defaults to the array I mentioned a few words ago. Leave an empty array (TS) or null (JS) if you wanna skip this.
 `short` - `true` if the function should return letters instead of words (I suck at explaining). Defaults to false.
 
 ```js
@@ -106,10 +108,14 @@ new Duration(165684).getFormattedDuration("s", "h");
 // `45:684`
 // ignores the `to` parameter if it is larger than the `from` parameter
 ```
+**NOTE: `getFormattedDuration()` will be deprecated soon.`**
+
 
 #### getSimpleFormattedDuration()
 
 `getSimpleFormattedDuration()` returns a formatted string of the duration object in the `d:h:m:s:ms` format.
+
+**NOTE: `getSimpleFormattedDuration()` is deprecated. Please use `Duration#toString()`**
 
 ```js
 new Duration(165684).getSimpleFormattedDuration();

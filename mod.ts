@@ -86,6 +86,7 @@ export class Duration {
    */
   constructor(timestamp: number = Duration.getCurrentDuration()) {
     if (timestamp < 0) timestamp = 0; // Prevent negative time
+    timestamp = Number(timestamp);
     this.raw = timestamp;
     this.d = Math.trunc(timestamp / 86400000);
     this.h = Math.trunc(timestamp / 3600000) % 24;
@@ -106,7 +107,7 @@ export class Duration {
       { type: "m", value: this.m },
       { type: "s", value: this.s },
       { type: "ms", value: this.ms },
-      { type: "us", value: this.µs },
+      { type: "us", value: this.us },
       { type: "ns", value: this.ns },
     ];
   }
@@ -189,7 +190,74 @@ export class Duration {
     this.ns += n;
     return this.reload();
   }
-
+  /**
+   * Clone current duration (run Duration#reload before this if you manually tweaked the properties).
+   * @returns {Duration} cloned duration
+   */
+  clone(): Duration {
+    return new Duration(this.raw);
+  }
+  /**
+   * Get a duration formatted using colons (:).
+   * @param {string} fromT - Unit to display from.
+   * @param {string} toT - Unit to display upto.
+   * @returns {string} Formatted string.
+   */
+  getFormattedDuration(
+    fromT: DurationKeys = "d",
+    toT: DurationKeys = "ns",
+  ): string {
+    if (
+      typeof fromT !== "string" ||
+      typeof toT !== "string" ||
+      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
+      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
+    ) {
+      return this.getSimpleFormattedDuration();
+    }
+    const durations = this.getFormattedDurationArray();
+    const listOfKeys = Object.keys(keyList);
+    return durations.slice(
+      listOfKeys.indexOf(fromT),
+      listOfKeys.indexOf(toT) + 1,
+    ).join(":");
+  }
+  /**
+   * Get a simple formatted duration in the form dd:hh:mm:ss:ms (Deprecated. Use Duration#toString())
+   * @returns {string} Formatted string
+   */
+  getSimpleFormattedDuration(): string {
+    return this.toString();
+  }
+  getFormattedDurationArray(): string[] {
+    return this.array.map((x) =>
+      ["ms", "us", "ns"].includes(x.type)
+        ? addZero(x.value, 3)
+        : addZero(x.value, 2)
+    );
+  }
+  /**
+   * Update data to match any modification to values.
+   * @returns {<Duration>}
+   */
+  reload(): Duration {
+    const ts = this.d * 8.64e7 +
+      this.h * 3600000 +
+      this.m * 60000 +
+      this.s * 1000 +
+      this.ms + (this.us / 1000) + (this.ns / 1000000);
+    if (ts === this.raw) return this;
+    const newDuration = new Duration(ts);
+    this.d = newDuration.d;
+    this.h = newDuration.h;
+    this.m = newDuration.m;
+    this.s = newDuration.s;
+    this.ms = newDuration.ms;
+    this.ns = newDuration.ns;
+    this.us = newDuration.us;
+    this.raw = newDuration.raw;
+    return this;
+  }
   /**
    * Set days of the duration.
    * @param {number} n - Number of days to set.
@@ -300,53 +368,18 @@ export class Duration {
     }`;
   }
   /**
-   * Get a duration formatted using colons (:).
-   * @param {string} fromT - Unit to display from.
-   * @param {string} toT - Unit to display upto.
-   * @returns {string} Formatted string.
-   */
-  getFormattedDuration(
-    fromT: DurationKeys = "d",
-    toT: DurationKeys = "ns",
-  ): string {
-    if (
-      typeof fromT !== "string" ||
-      typeof toT !== "string" ||
-      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
-      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
-    ) {
-      return this.getSimpleFormattedDuration();
-    }
-    const durations = [];
-    const nextIndex =
-      this.array.findIndex((x) => x.type === toT.toLowerCase()) + 1;
-    const next = this.array[nextIndex];
-    for (const obj of this.array) {
-      if (obj.type !== fromT.toLowerCase() && durations.length === 0) continue;
-      if (obj.type === next?.type) break;
-      durations.push(
-        ["ms", "us", "ns"].includes(obj.type)
-          ? addZero(obj.value, 3)
-          : obj.type === "d"
-          ? obj.value
-          : addZero(obj.value, 2),
-      );
-    }
-    return durations.join(":");
-  }
-  /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms
    * @returns {string} Formatted string
    */
-  getSimpleFormattedDuration(): string {
-    return `${this.array.map((x) => x.value).join(":")}`;
+  toString(): string {
+    return `${this.getFormattedDurationArray().join(":")}`;
   }
   /**
-   * Extra filler function that returns the class data in a single short string.
-   * @returns {string} Dumb string
+   * Convert the Duration into a plain object.
+   * @returns {DurationObj} Duration object
    */
-  toString(): string {
-    return `[Duration ${this.stringify(["d", "h", "m", "s"], true)}]`;
+  toJSON(): DurationObj {
+    return this.json;
   }
   /**
    * Just the valueOf method.
@@ -354,28 +387,6 @@ export class Duration {
    */
   valueOf(): number {
     return this.raw;
-  }
-  /**
-   * Update data to match any modification to values.
-   * @returns {<Duration>}
-   */
-  reload(): Duration {
-    const ts = this.d * 8.64e7 +
-      this.h * 3600000 +
-      this.m * 60000 +
-      this.s * 1000 +
-      this.ms + (this.us / 1000) + (this.ns / 1000000);
-    if (ts === this.raw) return this;
-    const newDuration = new Duration(ts);
-    this.d = newDuration.d;
-    this.h = newDuration.h;
-    this.m = newDuration.m;
-    this.s = newDuration.s;
-    this.ms = newDuration.ms;
-    this.ns = newDuration.ns;
-    this.us = newDuration.us;
-    this.raw = newDuration.raw;
-    return this;
   }
   /**
    * Get the duration between two timestamps or two other durations.
@@ -419,10 +430,8 @@ export class Duration {
    * @returns {<Duration>}
    */
   static fromString(str: string, doNotParse = false): Duration {
-    const { d, h, m, s, ms, ns, us } = Duration.readString(str);
-    const ts = d * 8.64e7 + h * 3600000 + m * 60000 + s * 1000 + ms +
-      (us / 1000) +
-      (ns / 1000000);
+    const { raw, d, h, m, s, ms, ns, us } = Duration.readString(str);
+    const ts = raw;
 
     const newDuration = new Duration(ts);
     if (doNotParse) {
@@ -448,7 +457,7 @@ export class Duration {
    * @param {string} str - The string to read
    * @returns {DurationObj} obj - Object with days, hours, mins, seconds and milliseconds
    */
-  static readString(str: string) {
+  static readString(str: string): DurationObj {
     str = str.replace(/\s\s/g, "");
     const days = matchReg(str, "d") || matchReg(str, "days") ||
       matchReg(str, "day");
@@ -475,6 +484,10 @@ export class Duration {
       matchReg(str, "microseconds");
     matchReg(str, "us");
     return {
+      raw: days * 8.64e7 + hours * 3600000 + minutes * 60000 + seconds * 1000 +
+        milliseconds +
+        (microseconds / 1000) +
+        (nanoseconds / 1000000),
       d: days,
       h: hours,
       m: minutes,
@@ -483,6 +496,17 @@ export class Duration {
       ns: nanoseconds,
       us: microseconds,
     };
+  }
+  /**
+   * Get duration since a moment in time.
+   * @param {Date|number} when
+   * @returns {Duration} Duration
+   */
+  static since(when: number | Date): Duration {
+    return Duration.between(
+      when instanceof Date ? when.getMilliseconds() : when,
+      null,
+    );
   }
 }
 
