@@ -190,7 +190,13 @@ export class Duration {
     this.ns += n;
     return this.reload();
   }
-
+  /**
+   * Clone current duration (run Duration#reload before this if you manually tweaked the properties).
+   * @returns {Duration} cloned duration
+   */
+  clone(): Duration {
+    return new Duration(this.raw);
+  }
   /**
    * Get a duration formatted using colons (:).
    * @param {string} fromT - Unit to display from.
