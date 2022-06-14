@@ -1,4 +1,4 @@
-import { Duration } from "./mod.js"
+import { Duration } from "./duration.js"
 
 console.debug(`Testing duration with Normal number`, new Duration(923))
 
