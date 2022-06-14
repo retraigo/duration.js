@@ -1,3 +1,5 @@
+import InWords from "./in_words.ts";
+
 interface KeyList {
   d: string;
   h: string;
@@ -17,6 +19,9 @@ const keyList: KeyList = {
   ns: "nanoseconds",
 };
 
+/**
+ * @typedef {string} DurationKeys - Units of time.
+ */
 export type DurationKeys = "d" | "h" | "m" | "s" | "ms" | "us" | "ns";
 
 /**
@@ -198,31 +203,6 @@ export class Duration {
     return new Duration(this.raw);
   }
   /**
-   * Get a duration formatted using colons (:).
-   * @param {string} fromT - Unit to display from.
-   * @param {string} toT - Unit to display upto.
-   * @returns {string} Formatted string.
-   */
-  getFormattedDuration(
-    fromT: DurationKeys = "d",
-    toT: DurationKeys = "ns",
-  ): string {
-    if (
-      typeof fromT !== "string" ||
-      typeof toT !== "string" ||
-      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
-      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
-    ) {
-      return this.getSimpleFormattedDuration();
-    }
-    const durations = this.getFormattedDurationArray();
-    const listOfKeys = Object.keys(keyList);
-    return durations.slice(
-      listOfKeys.indexOf(fromT),
-      listOfKeys.indexOf(toT) + 1,
-    ).join(":");
-  }
-  /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms (Deprecated. Use Duration#toString())
    * @returns {string} Formatted string
    */
@@ -321,50 +301,71 @@ export class Duration {
     this.ns = n;
     return this.reload();
   }
-
   /**
    * Get a formatted, human-readable string of the duration.
    * @param {string[]} values - The values required to display.
    * @param {boolean} shortandsweet - If response should be a short string.
    * @returns {string} formatted string - The formatted string result.
    */
-  stringify(values: string[] = [], shortandsweet = false): string {
+  toDescriptiveString(values: string[] | null = []): string {
     if (!Array.isArray(values) || values.length == 0) {
-      if (
-        !shortandsweet ||
-        typeof shortandsweet !== "boolean"
-      ) {
-        return `${
-          this.array
-            .map((x) => `${x.value} ${keyList[x.type]}`)
-            .join(", ")
-        }`;
-      }
-      return `${this.array.map((x) => `${x.value}${x.type}`).join(" ")}`;
-    }
-    if (values.length > 0) {
-      if (
-        !shortandsweet ||
-        typeof shortandsweet !== "boolean"
-      ) {
-        return `${
-          this.array
-            .filter((x) => values.includes(x.type))
-            .map((x) => `${x.value} ${keyList[x.type]}`)
-            .join(", ")
-        }`;
-      }
       return `${
-        this.array
-          .filter((x) => values.includes(x.type))
-          .map((x) => `${x.value}${x.type}`)
-          .join(" ")
+        this.array.map((x) => `${x.value} ${keyList[x.type]}`).join(", ")
       }`;
     }
     return `${
       this.array
+        .filter((x) => values.includes(x.type))
         .map((x) => `${x.value} ${keyList[x.type]}`)
         .join(", ")
+    }`;
+  }
+  /**
+   * Convert the Duration into a plain object.
+   * @returns {DurationObj} Duration object
+   */
+  toJSON(): DurationObj {
+    return this.json;
+  }
+  /**
+   * Get a duration formatted using colons (:).
+   * @param {string} fromT - Unit to display from.
+   * @param {string} toT - Unit to display upto.
+   * @returns {string} Formatted string.
+   */
+  toTimeString(
+    fromT: DurationKeys = "d",
+    toT: DurationKeys = "ns",
+  ): string {
+    if (
+      typeof fromT !== "string" ||
+      typeof toT !== "string" ||
+      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
+      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
+    ) {
+      return this.getSimpleFormattedDuration();
+    }
+    const durations = this.getFormattedDurationArray();
+    const listOfKeys = Object.keys(keyList);
+    return durations.slice(
+      listOfKeys.indexOf(fromT),
+      listOfKeys.indexOf(toT) + 1,
+    ).join(":");
+  }
+  /**
+   * Get a formatted, human-readable string of the duration.
+   * @param {string[]} values - The values required to display.
+   * @returns {string} formatted string - The formatted string result.
+   */
+  toShortString(values: string[] | null = []): string {
+    if (!Array.isArray(values) || values.length == 0) {
+      return `${this.array.map((x) => `${x.value}${x.type}`).join(" ")}`;
+    }
+    return `${
+      this.array
+        .filter((x) => values.includes(x.type))
+        .map((x) => `${x.value}${x.type}`)
+        .join(" ")
     }`;
   }
   /**
@@ -375,12 +376,34 @@ export class Duration {
     return `${this.getFormattedDurationArray().join(":")}`;
   }
   /**
-   * Convert the Duration into a plain object.
-   * @returns {DurationObj} Duration object
+   * Get a human-readable string of the duration in words.
+   * @param {string[]} values - The values required to display.
+   * @param {boolean} shortandsweet - If response should be a short string.
+   * @returns {string} formatted string - The formatted string result.
    */
-  toJSON(): DurationObj {
-    return this.json;
+  toWordString(values: string[] | null = []): string {
+    if (!Array.isArray(values) || values.length === 0) {
+      return `${
+        this.array
+          .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+          .join(", ")
+      }`;
+    }
+    if (values.length > 0) {
+      return `${
+        this.array
+          .filter((x) => values.includes(x.type))
+          .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+          .join(", ")
+      }`;
+    }
+    return `${
+      this.array
+        .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+        .join(", ")
+    }`;
   }
+
   /**
    * Just the valueOf method.
    * @returns {number} Raw milliseconds of the duration
