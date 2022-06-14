@@ -20,7 +20,7 @@ $ pnpm install @retraigo/duration.js # PNPM
 // Node
 import Duration from "@retraigo/duration.js"; 
 // Deno
-import Duration from "https://deno.land/x/durationjs@v2.3.2/mod.ts"; 
+import Duration from "https://deno.land/x/durationjs@v4.0.0/mod.ts"; 
 
 const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
 
@@ -31,6 +31,21 @@ new Duration(3545346); // A random duration
 new Duration(0); // Just 0
 
 new Duration(-1); // Negative duration returns 0 too
+```
+
+### Duration since a timestamp
+```ts
+const start = performance.now()
+// Do some long task
+const d = Duration.since(start)
+```
+
+### Duration between two timestamps
+```ts
+const start = performance.now()
+// Do some long task
+const check = performance.now()
+const d = Duration.between(start, check)
 ```
 
 ### From Text
