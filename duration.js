@@ -2,6 +2,104 @@
 // deno-lint-ignore-file
 // This code was bundled using `deno bundle` and it's not recommended to edit it manually
 
+const digits = [
+    "",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine", 
+];
+const teens = [
+    "",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen", 
+];
+const tens = [
+    "",
+    "ten",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety", 
+];
+const tenPowers = {
+    int: [
+        "{ones}",
+        "{tens}",
+        "{ones} hundred and",
+        "{ones} thousand,",
+        "{tens}",
+        "{ones} hundred and",
+        "{ones} million,",
+        "{tens}",
+        "{ones} hundred and",
+        "{ones} billion,",
+        "{tens}",
+        "{ones} hundred and",
+        "{ones} trillion,",
+        "{tens}",
+        "{ones} hundred and",
+        "{ones} thousand,",
+        "{tens}", 
+    ],
+    in: [
+        "{ones}",
+        "{tens}",
+        "{ones} hundred and",
+        "{ones} thousand,",
+        "{tens}",
+        "{ones} lakh,",
+        "{tens}",
+        "{ones} crore,",
+        "{tens}",
+        "{ones} hundred and",
+        "{ones} thousand,",
+        "{tens}",
+        "{ones} lakh,",
+        "{tens}",
+        "{ones} crore,",
+        "{tens}", 
+    ]
+};
+function getTenPower(i, indian = false) {
+    const arr = indian ? tenPowers.in : tenPowers.int;
+    i = i % arr.length;
+    return arr[i];
+}
+function __default(n, indian = false) {
+    if (n === 0) return "zero";
+    const digitNumbers = n.toString().split("").map((x)=>Number(x)
+    ).reverse();
+    const digitStrings = [];
+    for(let i = 0; i < digitNumbers.length; ++i){
+        if (getTenPower(i + 1, indian)?.startsWith("{tens}")) {
+            if (digitNumbers[i + 1] === 1) {
+                digitStrings.push(`${teens[digitNumbers[i]]} ${getTenPower(i, indian).replace(/\{ones\}\s?/, "")}`);
+                ++i;
+                continue;
+            }
+        }
+        digitStrings.push(getTenPower(i, indian).replace("{ones}", digits[digitNumbers[i]]).replace("{tens}", tens[digitNumbers[i]]));
+        console.log(i - digitNumbers.length);
+    }
+    return digitStrings.reverse().join(" ");
+}
 const keyList = {
     d: "days",
     h: "hours",
@@ -112,14 +210,6 @@ class Duration {
     clone() {
         return new Duration(this.raw);
     }
-    getFormattedDuration(fromT = "d", toT = "ns") {
-        if (typeof fromT !== "string" || typeof toT !== "string" || !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) || !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())) {
-            return this.getSimpleFormattedDuration();
-        }
-        const durations = this.getFormattedDurationArray();
-        const listOfKeys = Object.keys(keyList);
-        return durations.slice(listOfKeys.indexOf(fromT), listOfKeys.indexOf(toT) + 1).join(":");
-    }
     getSimpleFormattedDuration() {
         return this.toString();
     }
@@ -173,33 +263,50 @@ class Duration {
         this.ns = n;
         return this.reload();
     }
-    stringify(values = [], shortandsweet = false) {
+    toDescriptiveString(values = []) {
         if (!Array.isArray(values) || values.length == 0) {
-            if (!shortandsweet || typeof shortandsweet !== "boolean") {
-                return `${this.array.map((x)=>`${x.value} ${keyList[x.type]}`
-                ).join(", ")}`;
-            }
+            return `${this.array.map((x)=>`${x.value} ${keyList[x.type]}`
+            ).join(", ")}`;
+        }
+        return `${this.array.filter((x)=>values.includes(x.type)
+        ).map((x)=>`${x.value} ${keyList[x.type]}`
+        ).join(", ")}`;
+    }
+    toJSON() {
+        return this.json;
+    }
+    toShortString(values = []) {
+        if (!Array.isArray(values) || values.length == 0) {
             return `${this.array.map((x)=>`${x.value}${x.type}`
             ).join(" ")}`;
         }
-        if (values.length > 0) {
-            if (!shortandsweet || typeof shortandsweet !== "boolean") {
-                return `${this.array.filter((x)=>values.includes(x.type)
-                ).map((x)=>`${x.value} ${keyList[x.type]}`
-                ).join(", ")}`;
-            }
-            return `${this.array.filter((x)=>values.includes(x.type)
-            ).map((x)=>`${x.value}${x.type}`
-            ).join(" ")}`;
-        }
-        return `${this.array.map((x)=>`${x.value} ${keyList[x.type]}`
-        ).join(", ")}`;
+        return `${this.array.filter((x)=>values.includes(x.type)
+        ).map((x)=>`${x.value}${x.type}`
+        ).join(" ")}`;
     }
     toString() {
         return `${this.getFormattedDurationArray().join(":")}`;
     }
-    toJSON() {
-        return this.json;
+    toTimeString(fromT = "d", toT = "ns") {
+        if (typeof fromT !== "string" || typeof toT !== "string" || !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) || !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())) {
+            return this.getSimpleFormattedDuration();
+        }
+        const durations = this.getFormattedDurationArray();
+        const listOfKeys = Object.keys(keyList);
+        return durations.slice(listOfKeys.indexOf(fromT), listOfKeys.indexOf(toT) + 1).join(":");
+    }
+    toWordString(values = []) {
+        if (!Array.isArray(values) || values.length === 0) {
+            return `${this.array.map((x)=>`${__default(x.value).trim()} ${keyList[x.type]}`
+            ).join(", ")}`;
+        }
+        if (values.length > 0) {
+            return `${this.array.filter((x)=>values.includes(x.type)
+            ).map((x)=>`${__default(x.value).trim()} ${keyList[x.type]}`
+            ).join(", ")}`;
+        }
+        return `${this.array.map((x)=>`${__default(x.value).trim()} ${keyList[x.type]}`
+        ).join(", ")}`;
     }
     valueOf() {
         return this.raw;
@@ -242,14 +349,14 @@ class Duration {
     }
     static readString(str) {
         str = str.replace(/\s\s/g, "");
-        const days = matchReg(str, "d") || matchReg(str, "days") || matchReg(str, "day");
-        const hours = matchReg(str, "h") || matchReg(str, "hours") || matchReg(str, "hour");
-        const minutes = matchReg(str, "m") || matchReg(str, "min") || matchReg(str, "minute") || matchReg(str, "mins") || matchReg(str, "minutes");
-        const seconds = matchReg(str, "s") || matchReg(str, "sec") || matchReg(str, "second") || matchReg(str, "secs") || matchReg(str, "seconds");
-        const milliseconds = matchReg(str, "ms") || matchReg(str, "millisecond") || matchReg(str, "milliseconds");
-        const nanoseconds = matchReg(str, "ns") || matchReg(str, "nanosecond") || matchReg(str, "nanoseconds");
-        const microseconds = matchReg(str, "µs") || matchReg(str, "microsecond") || matchReg(str, "microseconds");
-        matchReg(str, "us");
+        const days = matchUnit(str, "d") || matchUnit(str, "days") || matchUnit(str, "day");
+        const hours = matchUnit(str, "h") || matchUnit(str, "hours") || matchUnit(str, "hour");
+        const minutes = matchUnit(str, "m") || matchUnit(str, "min") || matchUnit(str, "minute") || matchUnit(str, "mins") || matchUnit(str, "minutes");
+        const seconds = matchUnit(str, "s") || matchUnit(str, "sec") || matchUnit(str, "second") || matchUnit(str, "secs") || matchUnit(str, "seconds");
+        const milliseconds = matchUnit(str, "ms") || matchUnit(str, "millisecond") || matchUnit(str, "milliseconds");
+        const nanoseconds = matchUnit(str, "ns") || matchUnit(str, "nanosecond") || matchUnit(str, "nanoseconds");
+        const microseconds = matchUnit(str, "µs") || matchUnit(str, "microsecond") || matchUnit(str, "microseconds");
+        matchUnit(str, "us");
         return {
             raw: days * 86400000 + hours * 3600000 + minutes * 60000 + seconds * 1000 + milliseconds + microseconds / 1000 + nanoseconds / 1000000,
             d: days,
@@ -262,19 +369,20 @@ class Duration {
         };
     }
     static since(when) {
-        return Duration.between(when instanceof Date ? when.getMilliseconds() : when, null);
+        return Duration.between(when instanceof Date ? when.getTime() : when, Date.now());
     }
 }
-function matchReg(str, t) {
+function matchUnit(str, t) {
     const reg = new RegExp(`(\\d+)\\s?${t}(?:[^a-z]|$)`, "i");
     const matched = reg.exec(str);
     if (!matched) return 0;
     return parseInt(matched[1].replace(t, ""));
 }
-function addZero(num, digits = 3) {
-    const arr = new Array(digits).fill(0);
+function addZero(num, digits1 = 3) {
+    const arr = new Array(digits1).fill(0);
     return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
 }
-export { addZero as AddZero, matchReg as MatchUnit };
 export { Duration as Duration };
+export { matchUnit as matchUnit };
+export { addZero as addZero };
 export { Duration as default };

@@ -304,7 +304,6 @@ export class Duration {
   /**
    * Get a formatted, human-readable string of the duration.
    * @param {string[]} values - The values required to display.
-   * @param {boolean} shortandsweet - If response should be a short string.
    * @returns {string} formatted string - The formatted string result.
    */
   toDescriptiveString(values: string[] | null = []): string {
@@ -326,6 +325,29 @@ export class Duration {
    */
   toJSON(): DurationObj {
     return this.json;
+  }
+  /**
+   * Get a formatted, human-readable string of the duration.
+   * @param {string[]} values - The values required to display.
+   * @returns {string} formatted string - The formatted string result.
+   */
+  toShortString(values: string[] | null = []): string {
+    if (!Array.isArray(values) || values.length == 0) {
+      return `${this.array.map((x) => `${x.value}${x.type}`).join(" ")}`;
+    }
+    return `${
+      this.array
+        .filter((x) => values.includes(x.type))
+        .map((x) => `${x.value}${x.type}`)
+        .join(" ")
+    }`;
+  }
+  /**
+   * Get a simple formatted duration in the form dd:hh:mm:ss:ms
+   * @returns {string} Formatted string
+   */
+  toString(): string {
+    return `${this.getFormattedDurationArray().join(":")}`;
   }
   /**
    * Get a duration formatted using colons (:).
@@ -353,32 +375,8 @@ export class Duration {
     ).join(":");
   }
   /**
-   * Get a formatted, human-readable string of the duration.
-   * @param {string[]} values - The values required to display.
-   * @returns {string} formatted string - The formatted string result.
-   */
-  toShortString(values: string[] | null = []): string {
-    if (!Array.isArray(values) || values.length == 0) {
-      return `${this.array.map((x) => `${x.value}${x.type}`).join(" ")}`;
-    }
-    return `${
-      this.array
-        .filter((x) => values.includes(x.type))
-        .map((x) => `${x.value}${x.type}`)
-        .join(" ")
-    }`;
-  }
-  /**
-   * Get a simple formatted duration in the form dd:hh:mm:ss:ms
-   * @returns {string} Formatted string
-   */
-  toString(): string {
-    return `${this.getFormattedDurationArray().join(":")}`;
-  }
-  /**
    * Get a human-readable string of the duration in words.
    * @param {string[]} values - The values required to display.
-   * @param {boolean} shortandsweet - If response should be a short string.
    * @returns {string} formatted string - The formatted string result.
    */
   toWordString(values: string[] | null = []): string {
