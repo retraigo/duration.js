@@ -1,3 +1,5 @@
+import InWords from "./in_words.ts";
+
 interface KeyList {
   d: string;
   h: string;
@@ -17,6 +19,9 @@ const keyList: KeyList = {
   ns: "nanoseconds",
 };
 
+/**
+ * @typedef {string} DurationKeys - Units of time.
+ */
 export type DurationKeys = "d" | "h" | "m" | "s" | "ms" | "us" | "ns";
 
 /**
@@ -198,31 +203,6 @@ export class Duration {
     return new Duration(this.raw);
   }
   /**
-   * Get a duration formatted using colons (:).
-   * @param {string} fromT - Unit to display from.
-   * @param {string} toT - Unit to display upto.
-   * @returns {string} Formatted string.
-   */
-  getFormattedDuration(
-    fromT: DurationKeys = "d",
-    toT: DurationKeys = "ns",
-  ): string {
-    if (
-      typeof fromT !== "string" ||
-      typeof toT !== "string" ||
-      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
-      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
-    ) {
-      return this.getSimpleFormattedDuration();
-    }
-    const durations = this.getFormattedDurationArray();
-    const listOfKeys = Object.keys(keyList);
-    return durations.slice(
-      listOfKeys.indexOf(fromT),
-      listOfKeys.indexOf(toT) + 1,
-    ).join(":");
-  }
-  /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms (Deprecated. Use Duration#toString())
    * @returns {string} Formatted string
    */
@@ -321,50 +301,71 @@ export class Duration {
     this.ns = n;
     return this.reload();
   }
-
   /**
    * Get a formatted, human-readable string of the duration.
    * @param {string[]} values - The values required to display.
    * @param {boolean} shortandsweet - If response should be a short string.
    * @returns {string} formatted string - The formatted string result.
    */
-  stringify(values: string[] = [], shortandsweet = false): string {
+  toDescriptiveString(values: string[] | null = []): string {
     if (!Array.isArray(values) || values.length == 0) {
-      if (
-        !shortandsweet ||
-        typeof shortandsweet !== "boolean"
-      ) {
-        return `${
-          this.array
-            .map((x) => `${x.value} ${keyList[x.type]}`)
-            .join(", ")
-        }`;
-      }
-      return `${this.array.map((x) => `${x.value}${x.type}`).join(" ")}`;
-    }
-    if (values.length > 0) {
-      if (
-        !shortandsweet ||
-        typeof shortandsweet !== "boolean"
-      ) {
-        return `${
-          this.array
-            .filter((x) => values.includes(x.type))
-            .map((x) => `${x.value} ${keyList[x.type]}`)
-            .join(", ")
-        }`;
-      }
       return `${
-        this.array
-          .filter((x) => values.includes(x.type))
-          .map((x) => `${x.value}${x.type}`)
-          .join(" ")
+        this.array.map((x) => `${x.value} ${keyList[x.type]}`).join(", ")
       }`;
     }
     return `${
       this.array
+        .filter((x) => values.includes(x.type))
         .map((x) => `${x.value} ${keyList[x.type]}`)
         .join(", ")
+    }`;
+  }
+  /**
+   * Convert the Duration into a plain object.
+   * @returns {DurationObj} Duration object
+   */
+  toJSON(): DurationObj {
+    return this.json;
+  }
+  /**
+   * Get a duration formatted using colons (:).
+   * @param {string} fromT - Unit to display from.
+   * @param {string} toT - Unit to display upto.
+   * @returns {string} Formatted string.
+   */
+  toTimeString(
+    fromT: DurationKeys = "d",
+    toT: DurationKeys = "ns",
+  ): string {
+    if (
+      typeof fromT !== "string" ||
+      typeof toT !== "string" ||
+      !Object.prototype.hasOwnProperty.call(keyList, fromT.toLowerCase()) ||
+      !Object.prototype.hasOwnProperty.call(keyList, toT.toLowerCase())
+    ) {
+      return this.getSimpleFormattedDuration();
+    }
+    const durations = this.getFormattedDurationArray();
+    const listOfKeys = Object.keys(keyList);
+    return durations.slice(
+      listOfKeys.indexOf(fromT),
+      listOfKeys.indexOf(toT) + 1,
+    ).join(":");
+  }
+  /**
+   * Get a formatted, human-readable string of the duration.
+   * @param {string[]} values - The values required to display.
+   * @returns {string} formatted string - The formatted string result.
+   */
+  toShortString(values: string[] | null = []): string {
+    if (!Array.isArray(values) || values.length == 0) {
+      return `${this.array.map((x) => `${x.value}${x.type}`).join(" ")}`;
+    }
+    return `${
+      this.array
+        .filter((x) => values.includes(x.type))
+        .map((x) => `${x.value}${x.type}`)
+        .join(" ")
     }`;
   }
   /**
@@ -375,12 +376,34 @@ export class Duration {
     return `${this.getFormattedDurationArray().join(":")}`;
   }
   /**
-   * Convert the Duration into a plain object.
-   * @returns {DurationObj} Duration object
+   * Get a human-readable string of the duration in words.
+   * @param {string[]} values - The values required to display.
+   * @param {boolean} shortandsweet - If response should be a short string.
+   * @returns {string} formatted string - The formatted string result.
    */
-  toJSON(): DurationObj {
-    return this.json;
+  toWordString(values: string[] | null = []): string {
+    if (!Array.isArray(values) || values.length === 0) {
+      return `${
+        this.array
+          .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+          .join(", ")
+      }`;
+    }
+    if (values.length > 0) {
+      return `${
+        this.array
+          .filter((x) => values.includes(x.type))
+          .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+          .join(", ")
+      }`;
+    }
+    return `${
+      this.array
+        .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+        .join(", ")
+    }`;
   }
+
   /**
    * Just the valueOf method.
    * @returns {number} Raw milliseconds of the duration
@@ -427,7 +450,7 @@ export class Duration {
    * Reads a given string and parses a duration from it.
    * @param {string} str - A string which could contain a duration
    * @param {string} doNotParse - Directly return the values read
-   * @returns {<Duration>}
+   * @returns {Duration}
    */
   static fromString(str: string, doNotParse = false): Duration {
     const { raw, d, h, m, s, ms, ns, us } = Duration.readString(str);
@@ -459,30 +482,30 @@ export class Duration {
    */
   static readString(str: string): DurationObj {
     str = str.replace(/\s\s/g, "");
-    const days = matchReg(str, "d") || matchReg(str, "days") ||
-      matchReg(str, "day");
-    const hours = matchReg(str, "h") || matchReg(str, "hours") ||
-      matchReg(str, "hour");
-    const minutes = matchReg(str, "m") ||
-      matchReg(str, "min") ||
-      matchReg(str, "minute") ||
-      matchReg(str, "mins") ||
-      matchReg(str, "minutes");
-    const seconds = matchReg(str, "s") ||
-      matchReg(str, "sec") ||
-      matchReg(str, "second") ||
-      matchReg(str, "secs") ||
-      matchReg(str, "seconds");
-    const milliseconds = matchReg(str, "ms") ||
-      matchReg(str, "millisecond") ||
-      matchReg(str, "milliseconds");
-    const nanoseconds = matchReg(str, "ns") ||
-      matchReg(str, "nanosecond") ||
-      matchReg(str, "nanoseconds");
-    const microseconds = matchReg(str, "µs") ||
-      matchReg(str, "microsecond") ||
-      matchReg(str, "microseconds");
-    matchReg(str, "us");
+    const days = matchUnit(str, "d") || matchUnit(str, "days") ||
+      matchUnit(str, "day");
+    const hours = matchUnit(str, "h") || matchUnit(str, "hours") ||
+      matchUnit(str, "hour");
+    const minutes = matchUnit(str, "m") ||
+      matchUnit(str, "min") ||
+      matchUnit(str, "minute") ||
+      matchUnit(str, "mins") ||
+      matchUnit(str, "minutes");
+    const seconds = matchUnit(str, "s") ||
+      matchUnit(str, "sec") ||
+      matchUnit(str, "second") ||
+      matchUnit(str, "secs") ||
+      matchUnit(str, "seconds");
+    const milliseconds = matchUnit(str, "ms") ||
+      matchUnit(str, "millisecond") ||
+      matchUnit(str, "milliseconds");
+    const nanoseconds = matchUnit(str, "ns") ||
+      matchUnit(str, "nanosecond") ||
+      matchUnit(str, "nanoseconds");
+    const microseconds = matchUnit(str, "µs") ||
+      matchUnit(str, "microsecond") ||
+      matchUnit(str, "microseconds");
+    matchUnit(str, "us");
     return {
       raw: days * 8.64e7 + hours * 3600000 + minutes * 60000 + seconds * 1000 +
         milliseconds +
@@ -504,8 +527,8 @@ export class Duration {
    */
   static since(when: number | Date): Duration {
     return Duration.between(
-      when instanceof Date ? when.getMilliseconds() : when,
-      null,
+      when instanceof Date ? when.getTime() : when,
+      Date.now(),
     );
   }
 }
@@ -516,19 +539,24 @@ export class Duration {
  * @param {string} t - Unit to look for. Doesn't support aliases.
  * @returns {number} value - Value of the unit matched
  */
-function matchReg(str: string, t: string): number {
+export function matchUnit(str: string, t: string): number {
   const reg = new RegExp(`(\\d+)\\s?${t}(?:[^a-z]|$)`, "i");
   const matched = reg.exec(str);
   if (!matched) return 0;
   return parseInt(matched[1].replace(t, ""));
 }
 
-function addZero(num: number, digits = 3): string {
+/**
+ * Add zeros to the beginning of a number till it reaches a certain digit count.
+ * @param {number} num - Number to add zeros to.
+ * @param {number} digits - Number of digits the number has to reach.
+ */
+export function addZero(num: number, digits = 3): string {
   const arr = new Array(digits).fill(0);
   return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
 }
 
+// For CommonJS support
 // module.exports = Duration;
 
 export default Duration;
-export { addZero as AddZero, matchReg as MatchUnit };
