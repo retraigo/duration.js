@@ -427,7 +427,7 @@ export class Duration {
    * Reads a given string and parses a duration from it.
    * @param {string} str - A string which could contain a duration
    * @param {string} doNotParse - Directly return the values read
-   * @returns {<Duration>}
+   * @returns {Duration}
    */
   static fromString(str: string, doNotParse = false): Duration {
     const { raw, d, h, m, s, ms, ns, us } = Duration.readString(str);
@@ -459,30 +459,30 @@ export class Duration {
    */
   static readString(str: string): DurationObj {
     str = str.replace(/\s\s/g, "");
-    const days = matchReg(str, "d") || matchReg(str, "days") ||
-      matchReg(str, "day");
-    const hours = matchReg(str, "h") || matchReg(str, "hours") ||
-      matchReg(str, "hour");
-    const minutes = matchReg(str, "m") ||
-      matchReg(str, "min") ||
-      matchReg(str, "minute") ||
-      matchReg(str, "mins") ||
-      matchReg(str, "minutes");
-    const seconds = matchReg(str, "s") ||
-      matchReg(str, "sec") ||
-      matchReg(str, "second") ||
-      matchReg(str, "secs") ||
-      matchReg(str, "seconds");
-    const milliseconds = matchReg(str, "ms") ||
-      matchReg(str, "millisecond") ||
-      matchReg(str, "milliseconds");
-    const nanoseconds = matchReg(str, "ns") ||
-      matchReg(str, "nanosecond") ||
-      matchReg(str, "nanoseconds");
-    const microseconds = matchReg(str, "µs") ||
-      matchReg(str, "microsecond") ||
-      matchReg(str, "microseconds");
-    matchReg(str, "us");
+    const days = matchUnit(str, "d") || matchUnit(str, "days") ||
+      matchUnit(str, "day");
+    const hours = matchUnit(str, "h") || matchUnit(str, "hours") ||
+      matchUnit(str, "hour");
+    const minutes = matchUnit(str, "m") ||
+      matchUnit(str, "min") ||
+      matchUnit(str, "minute") ||
+      matchUnit(str, "mins") ||
+      matchUnit(str, "minutes");
+    const seconds = matchUnit(str, "s") ||
+      matchUnit(str, "sec") ||
+      matchUnit(str, "second") ||
+      matchUnit(str, "secs") ||
+      matchUnit(str, "seconds");
+    const milliseconds = matchUnit(str, "ms") ||
+      matchUnit(str, "millisecond") ||
+      matchUnit(str, "milliseconds");
+    const nanoseconds = matchUnit(str, "ns") ||
+      matchUnit(str, "nanosecond") ||
+      matchUnit(str, "nanoseconds");
+    const microseconds = matchUnit(str, "µs") ||
+      matchUnit(str, "microsecond") ||
+      matchUnit(str, "microseconds");
+    matchUnit(str, "us");
     return {
       raw: days * 8.64e7 + hours * 3600000 + minutes * 60000 + seconds * 1000 +
         milliseconds +
@@ -504,8 +504,8 @@ export class Duration {
    */
   static since(when: number | Date): Duration {
     return Duration.between(
-      when instanceof Date ? when.getMilliseconds() : when,
-      null,
+      when instanceof Date ? when.getTime() : when,
+      Date.now(),
     );
   }
 }
@@ -516,19 +516,24 @@ export class Duration {
  * @param {string} t - Unit to look for. Doesn't support aliases.
  * @returns {number} value - Value of the unit matched
  */
-function matchReg(str: string, t: string): number {
+export function matchUnit(str: string, t: string): number {
   const reg = new RegExp(`(\\d+)\\s?${t}(?:[^a-z]|$)`, "i");
   const matched = reg.exec(str);
   if (!matched) return 0;
   return parseInt(matched[1].replace(t, ""));
 }
 
-function addZero(num: number, digits = 3): string {
+/**
+ * Add zeros to the beginning of a number till it reaches a certain digit count.
+ * @param {number} num - Number to add zeros to.
+ * @param {number} digits - Number of digits the number has to reach.
+ */
+export function addZero(num: number, digits = 3): string {
   const arr = new Array(digits).fill(0);
   return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
 }
 
+// For CommonJS support
 // module.exports = Duration;
 
 export default Duration;
-export { addZero as AddZero, matchReg as MatchUnit };
