@@ -3,7 +3,7 @@
   "version": "3.1.1",
   "type": "module",
   "description": "Get the formatted time duration",
-  "main": "mod.js",
+  "main": "duration.js",
   "scripts": {
     "test": "node test"
   },
