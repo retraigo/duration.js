@@ -1,7 +1,7 @@
 # duration.js
 
 ## Documentation
-Check out [Neko Of The Abyss](https://docs.nekooftheabyss.moe) for documentation.
+Check out [Neko Of The Abyss](https://docs.nekooftheabyss.moe/duration) for documentation.
 
 Duration follows the `performance.now()` format, so microseconds and nanoseconds go after the decimal point.
 
@@ -32,8 +32,6 @@ new Duration(0); // Just 0
 
 new Duration(-1); // Negative duration returns 0 too
 ```
-
-For CommonJS support with require, download the `index.js` file and replace `export default` with `module.exports = `.
 
 ### From Text
 
@@ -67,97 +65,23 @@ Duration {
 };
 ```
 
-### Methods
+### Formatting
 
-#### toString()
+```ts
+const duration = new Duration(59834344.334)
 
-`toString()` returns a simplified version of `stringify()` despite not looking nice at all. Simply exists.
-
-```js
-new Duration(261174).toString();
-// `[Duration 0d 0h 4m 21s]`
-```
-
-#### stringify([values] [,short])
-
-`stringify()` returns a formatted string of the duration object. It has two optional parameters.
-`values` - An array of values to include. Should be one of `['d', 'h', 'm', 's', 'ms']`. Defaults to the array I mentioned a few words ago. Leave an empty array (TS) or null (JS) if you wanna skip this.
-`short` - `true` if the function should return letters instead of words (I suck at explaining). Defaults to false.
-
-```js
-new Duration(165684).stringify();
-// `0 days, 0 hours, 2 minutes, 45 seconds, 684 milliseconds`
-new Duration(165684).stringify(["s", "h"]);
-// `0 hours, 45 seconds`
-new Duration(165684).stringify(["s", "h"], true);
-// `0h 45s`
-```
-
-#### getFormattedDuration([from] [,to])
-
-`getFormattedDuration()` returns a formatted string of the duration object in the `d:h:m:s:ms` format. It has two optional parameters.
-`from` - The value to begin with. Should be one of `['d', 'h', 'm', 's', 'ms']`. Defaults to `'d'`.
-`to` - The value to end with. Should be one of `['d', 'h', 'm', 's', 'ms']`. Defaults to `'ms'`.
-
-```js
-new Duration(165684).getFormattedDuration();
-// `0:0:2:45:684`
-new Duration(165684).getFormattedDuration("h", "s");
-// `0:2:45`
-new Duration(165684).getFormattedDuration("s", "h");
-// `45:684`
-// ignores the `to` parameter if it is larger than the `from` parameter
-```
-**NOTE: `getFormattedDuration()` will be deprecated soon.`**
-
-
-#### getSimpleFormattedDuration()
-
-`getSimpleFormattedDuration()` returns a formatted string of the duration object in the `d:h:m:s:ms` format.
-
-**NOTE: `getSimpleFormattedDuration()` is deprecated. Please use `Duration#toString()`**
-
-```js
-new Duration(165684).getSimpleFormattedDuration();
-// `0:0:2:45:684`
-```
-
-#### reload()
-
-Reload the duration.
-
-```js
-const d = new Duration(6000);
-d.m += 70
-console.log(d) // Only d.m changes. d.h remains the same
-d.reload()
-console.log(d) // d.m turns into 10 and d.h turns into 1
-```
-
-#### get json()
-
-Returns a JavaScript object version of the class with just the main stuff.
-
-```js
-new Duration(114750).json;
-// `{ d: 0, h: 0, m: 1, s: 54, ms: 750 }`
-```
-
-#### get array()
-
-Returns an array of objects with type and value.
-
-```js
-new Duration(245074).array;
-/* 
-   [
-       { type: 'd', value: 0 },
-       { type: 'h', value: 0 },
-       { type: 'm', value: 4 },
-       { type: 's', value: 5 },
-       { type: 'ms', value: 74 }
-   ]
-*/
+console.log(duration)
+// Duration { raw: 59834344.334, d: 0, h: 16, m: 37, s: 14, ms: 344, us: 334, ns: 0 }
+console.log(duration.toDescriptiveString())
+// 0 days, 16 hours, 37 minutes, 14 seconds, 344 milliseconds, 334 microseconds, 0 nanoseconds
+console.log(duration.toShortString())
+// 0d 16h 37m 14s 344ms 334us 0ns
+console.log(duration.toWordString())
+// zero days, sixteen hours, thirty seven minutes, fourteen seconds, 
+// three hundred and forty four milliseconds, three hundred and thirty 
+// four microseconds, zero nanoseconds
+console.log(duration.toTimeString())
+// 00:16:37:14:344:334:000
 ```
 
 
