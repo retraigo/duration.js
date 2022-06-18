@@ -19,8 +19,8 @@ console.timeLog("Speed Test", "Ran addSeconds 1000000 times.", "-", `${performan
 const b = a.clone()
 console.timeLog("Speed Test", "Cloned the duration.", "-", `${performance.now()}ms`)
 console.timeEnd("Speed Test", "-", `${performance.now()}ms`)
-console.debug("Stringifying Test:", "Words:", b.stringify())
-console.debug("Stringifying Test:", "Short:", b.stringify([], true));
+console.debug("Stringifying Test:", "Words:", b.toWordString())
+console.debug("Stringifying Test:", "Short:", b.toShortString([], true));
 console.debug("Stringifying Test:", "Shorter:", b.toString())
 
-console.debug("Parsing Test:", JSON.stringify(b))
+// console.debug("Parsing Test:", J(b))
