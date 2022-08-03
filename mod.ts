@@ -1,15 +1,6 @@
 import InWords from "./in_words.ts";
 
-interface KeyList {
-  d: string;
-  h: string;
-  m: string;
-  s: string;
-  ms: string;
-  us: string;
-  ns: string;
-}
-const keyList: KeyList = {
+const keyList: Record<DurationKeys, string> = {
   d: "days",
   h: "hours",
   m: "minutes",
@@ -20,15 +11,15 @@ const keyList: KeyList = {
 };
 
 /**
- * @typedef {string} DurationKeys - Units of time.
+ * @typedef {string} DurationKeys Units of time.
  */
 export type DurationKeys = "d" | "h" | "m" | "s" | "ms" | "us" | "ns";
 
 /**
  * For the array of values
  * @typedef {object} KeyValue
- * @property {string} type - Type of key. One of d, h, m, s, ms, us, ns
- * @property {number} value - Value of the time unit
+ * @property {string} type Type of key. One of d, h, m, s, ms, us, ns
+ * @property {number} value Value of the time unit
  */
 export interface KeyValue {
   type: DurationKeys;
@@ -38,14 +29,14 @@ export interface KeyValue {
 /**
  * Duration Object
  * @typedef {Object} DurationObj
- * @property {number} raw - Total number of milliseconds in the duration
- * @property {number} d - Number of days held by duration
- * @property {number} h - Number of hours held by duration
- * @property {number} m - Number of minutes held by duration
- * @property {number} s - Number of seconds held by duration
- * @property {number} ms - Number of milliseconds held by duration
- * @property {number} us - Number of microseconds held by duration
- * @property {number} ns - Number of nanoseconds held by duration
+ * @property {number} raw Total number of milliseconds in the duration
+ * @property {number} d Number of days held by duration
+ * @property {number} h Number of hours held by duration
+ * @property {number} m Number of minutes held by duration
+ * @property {number} s Number of seconds held by duration
+ * @property {number} ms Number of milliseconds held by duration
+ * @property {number} us Number of microseconds held by duration
+ * @property {number} ns Number of nanoseconds held by duration
  */
 export interface DurationObj {
   raw: number;
@@ -86,7 +77,7 @@ export class Duration {
   ns: number;
   /**
    * Parse milliseconds into separate units of time.
-   * @param {number} timestamp - Milliseconds to parse into a duration object.
+   * @param {number} timestamp Milliseconds to parse into a duration object.
    * @returns {<Duration>}
    */
   constructor(timestamp: number = Duration.getCurrentDuration()) {
@@ -134,7 +125,7 @@ export class Duration {
   }
   /**
    * Add more days to the duration.
-   * @param {number} n - Number of days to add.
+   * @param {number} n Number of days to add.
    * @returns {Duration} The updated duration.
    */
   addDays(n: number): Duration {
@@ -143,7 +134,7 @@ export class Duration {
   }
   /**
    * Add more hours to the duration.
-   * @param {number} n - Number of hours to add.
+   * @param {number} n Number of hours to add.
    * @returns {Duration} The updated duration.
    */
   addHours(n: number): Duration {
@@ -152,7 +143,7 @@ export class Duration {
   }
   /**
    * Add more minutes to the duration.
-   * @param {number} n - Number of minutes to add.
+   * @param {number} n Number of minutes to add.
    * @returns {Duration} The updated duration.
    */
   addMinutes(n: number): Duration {
@@ -161,7 +152,7 @@ export class Duration {
   }
   /**
    * Add more seconds to the duration.
-   * @param {number} n - Number of seconds to add.
+   * @param {number} n Number of seconds to add.
    * @returns {Duration} The updated duration.
    */
   addSeconds(n: number): Duration {
@@ -170,7 +161,7 @@ export class Duration {
   }
   /**
    * Add more milliseconds to the duration.
-   * @param {number} n - Number of milliseconds to add.
+   * @param {number} n Number of milliseconds to add.
    * @returns {Duration} The updated duration.
    */
   addMilliseconds(n: number): Duration {
@@ -179,7 +170,7 @@ export class Duration {
   }
   /**
    * Add more microseconds to the duration.
-   * @param {number} n - Number of microseconds to add.
+   * @param {number} n Number of microseconds to add.
    * @returns {Duration} The updated duration.
    */
   addMicroseconds(n: number): Duration {
@@ -188,7 +179,7 @@ export class Duration {
   }
   /**
    * Add more nanoseconds to the duration.
-   * @param {number} n - Number of nanoseconds to add.
+   * @param {number} n Number of nanoseconds to add.
    * @returns {Duration} The updated duration.
    */
   addNanoseconds(n: number): Duration {
@@ -218,7 +209,7 @@ export class Duration {
   }
   /**
    * Update data to match any modification to values.
-   * @returns {<Duration>}
+   * @returns {Duration} Updated duration.
    */
   reload(): Duration {
     const ts = this.d * 8.64e7 +
@@ -240,7 +231,7 @@ export class Duration {
   }
   /**
    * Set days of the duration.
-   * @param {number} n - Number of days to set.
+   * @param {number} n Number of days to set.
    * @returns {Duration} The updated duration.
    */
   setDays(n: number): Duration {
@@ -249,7 +240,7 @@ export class Duration {
   }
   /**
    * Set hours of the duration.
-   * @param {number} n - Number of hours to set.
+   * @param {number} n Number of hours to set.
    * @returns {Duration} The updated duration.
    */
   setHours(n: number): Duration {
@@ -258,7 +249,7 @@ export class Duration {
   }
   /**
    * Set minutes of the duration.
-   * @param {number} n - Number of minutes to set.
+   * @param {number} n Number of minutes to set.
    * @returns {Duration} The updated duration.
    */
   setMinutes(n: number): Duration {
@@ -267,7 +258,7 @@ export class Duration {
   }
   /**
    * Set seconds of the duration.
-   * @param {number} n - Number of seconds to set.
+   * @param {number} n Number of seconds to set.
    * @returns {Duration} The updated duration.
    */
   setSeconds(n: number): Duration {
@@ -276,7 +267,7 @@ export class Duration {
   }
   /**
    * Set milliseconds of the duration.
-   * @param {number} n - Number of milliseconds to set.
+   * @param {number} n Number of milliseconds to set.
    * @returns {Duration} The updated duration.
    */
   setMilliseconds(n: number): Duration {
@@ -285,7 +276,7 @@ export class Duration {
   }
   /**
    * Set microseconds of the duration.
-   * @param {number} n - Number of microseconds to set.
+   * @param {number} n Number of microseconds to set.
    * @returns {Duration} The updated duration.
    */
   setMicroseconds(n: number): Duration {
@@ -294,7 +285,7 @@ export class Duration {
   }
   /**
    * Set nanoseconds of the duration.
-   * @param {number} n - Number of nanoseconds to set.
+   * @param {number} n Number of nanoseconds to set.
    * @returns {Duration} The updated duration.
    */
   setNanoseconds(n: number): Duration {
@@ -303,8 +294,8 @@ export class Duration {
   }
   /**
    * Get a formatted, human-readable string of the duration.
-   * @param {string[]} values - The values required to display.
-   * @returns {string} formatted string - The formatted string result.
+   * @param {string[]} values The values required to display.
+   * @returns {string} formatted string The formatted string result.
    */
   toDescriptiveString(values: string[] | null = []): string {
     if (!Array.isArray(values) || values.length == 0) {
@@ -328,8 +319,8 @@ export class Duration {
   }
   /**
    * Get a formatted, human-readable string of the duration.
-   * @param {string[]} values - The values required to display.
-   * @returns {string} formatted string - The formatted string result.
+   * @param {string[]} values The values required to display.
+   * @returns {string} formatted string The formatted string result.
    */
   toShortString(values: string[] | null = []): string {
     if (!Array.isArray(values) || values.length == 0) {
@@ -351,8 +342,8 @@ export class Duration {
   }
   /**
    * Get a duration formatted using colons (:).
-   * @param {string} fromT - Unit to display from.
-   * @param {string} toT - Unit to display upto.
+   * @param {string} fromT Unit to display from.
+   * @param {string} toT Unit to display upto.
    * @returns {string} Formatted string.
    */
   toTimeString(
@@ -376,8 +367,8 @@ export class Duration {
   }
   /**
    * Get a human-readable string of the duration in words.
-   * @param {string[]} values - The values required to display.
-   * @returns {string} formatted string - The formatted string result.
+   * @param {string[]} values The values required to display.
+   * @returns {string} formatted string The formatted string result.
    */
   toWordString(values: string[] | null = []): string {
     if (!Array.isArray(values) || values.length === 0) {
@@ -411,8 +402,8 @@ export class Duration {
   }
   /**
    * Get the duration between two timestamps or two other durations.
-   * @param {string|number|Duration} duration1 - Duration/Timestamp to find duration from.
-   * @param {string|number|Duration} duration2 - Duration/Timestamp to find duration upto.
+   * @param {string|number|Duration} duration1 Duration/Timestamp to find duration from.
+   * @param {string|number|Duration} duration2 Duration/Timestamp to find duration upto.
    * @returns {Duration} New duration between the two specified durations.
    */
   static between(
@@ -446,8 +437,8 @@ export class Duration {
   }
   /**
    * Reads a given string and parses a duration from it.
-   * @param {string} str - A string which could contain a duration
-   * @param {string} doNotParse - Directly return the values read
+   * @param {string} str A string which could contain a duration
+   * @param {string} doNotParse Directly return the values read
    * @returns {Duration}
    */
   static fromString(str: string, doNotParse = false): Duration {
@@ -475,8 +466,8 @@ export class Duration {
   }
   /**
    * Read duration data from a string.
-   * @param {string} str - The string to read
-   * @returns {DurationObj} obj - Object with days, hours, mins, seconds and milliseconds
+   * @param {string} str The string to read
+   * @returns {DurationObj} obj Object with days, hours, mins, seconds and milliseconds
    */
   static readString(str: string): DurationObj {
     str = str.replace(/\s\s/g, "");
@@ -502,8 +493,8 @@ export class Duration {
       matchUnit(str, "nanoseconds");
     const microseconds = matchUnit(str, "µs") ||
       matchUnit(str, "microsecond") ||
-      matchUnit(str, "microseconds");
-    matchUnit(str, "us");
+      matchUnit(str, "microseconds") ||
+      matchUnit(str, "us");
     return {
       raw: days * 8.64e7 + hours * 3600000 + minutes * 60000 + seconds * 1000 +
         milliseconds +
@@ -533,9 +524,9 @@ export class Duration {
 
 /**
  * Match a unit in a string. Like "1kg", "3L", etc.
- * @param {string} str - String to match from
- * @param {string} t - Unit to look for. Doesn't support aliases.
- * @returns {number} value - Value of the unit matched
+ * @param {string} str String to match from
+ * @param {string} t Unit to look for. Doesn't support aliases.
+ * @returns {number} value Value of the unit matched
  */
 export function matchUnit(str: string, t: string): number {
   const reg = new RegExp(`(\\d+)\\s?${t}(?:[^a-z]|$)`, "i");
@@ -546,8 +537,8 @@ export function matchUnit(str: string, t: string): number {
 
 /**
  * Add zeros to the beginning of a number till it reaches a certain digit count.
- * @param {number} num - Number to add zeros to.
- * @param {number} digits - Number of digits the number has to reach.
+ * @param {number} num Number to add zeros to.
+ * @param {number} digits Number of digits the number has to reach.
  */
 export function addZero(num: number, digits = 3): string {
   const arr = new Array(digits).fill(0);
