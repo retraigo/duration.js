@@ -187,6 +187,55 @@ export class Duration {
     return this.reload();
   }
   /**
+   * Get duration as days.
+   * @returns {number} Duration as days.
+   */
+  asDays(): number {
+    return this.raw / (24 * 60 * 60 * 1_000);
+  }
+  /**
+   * Get duration as hours.
+   * @returns {number} Duration as hours.
+   */
+  asHours(): number {
+    return this.raw / (60 * 60 * 1_000);
+  }
+  /**
+   * Get duration as minutes.
+   * @returns {number} Duration as minutes.
+   */
+  asMinutes(): number {
+    return this.raw / (60 * 1_000);
+  }
+  /**
+   * Get duration as seconds.
+   * @returns {number} Duration as seconds.
+   */
+  asSeconds(): number {
+    return this.raw / 1_000;
+  }
+  /**
+   * Get duration as milliseconds.
+   * @returns {number} Duration as milliseconds.
+   */
+  asMilliseconds(): number {
+    return this.raw;
+  }
+  /**
+   * Get duration as microseconds.
+   * @returns {number} Duration as microseconds.
+   */
+  asMicroseconds(): number {
+    return this.raw * 1_000;
+  }
+  /**
+   * Get duration as nanoseconds.
+   * @returns {number} Duration as nanoseconds.
+   */
+  asNanoseconds(): number {
+    return this.raw * 1_000_000;
+  }
+  /**
    * Clone current duration (run Duration#reload before this if you manually tweaked the properties).
    * @returns {Duration} cloned duration
    */
