@@ -34,8 +34,7 @@ const tens = [
   "eighty",
   "ninety",
 ];
-const tenPowers = {
-  int: [
+const tenPowers = [
     "{ones}",
     "{tens}",
     "{ones} hundred and",
@@ -53,26 +52,7 @@ const tenPowers = {
     "{ones} hundred and",
     "{ones} thousand,",
     "{tens}",
-  ],
-  in: [
-    "{ones}",
-    "{tens}",
-    "{ones} hundred and",
-    "{ones} thousand,",
-    "{tens}",
-    "{ones} lakh,",
-    "{tens}",
-    "{ones} crore,",
-    "{tens}",
-    "{ones} hundred and",
-    "{ones} thousand,",
-    "{tens}",
-    "{ones} lakh,",
-    "{tens}",
-    "{ones} crore,",
-    "{tens}",
-  ],
-};
+  ];
 
 /**
  * Get the right template for the digit.
@@ -80,10 +60,9 @@ const tenPowers = {
  * @param {boolean} indian - Whether to use Indian system. 
  * @returns 
  */
-function getTenPower(i: number, indian = false) {
-  const arr = indian ? tenPowers.in : tenPowers.int;
-  i = i % arr.length;
-  return arr[i];
+function getTenPower(i: number) {
+  i = i % tenPowers.length;
+  return tenPowers[i];
 }
 
 /**
@@ -92,17 +71,17 @@ function getTenPower(i: number, indian = false) {
  * @param {boolean} indian  - Whether to use Indian system. 
  * @returns {string} The number in words.
  */
-export default function (n: number, indian = false): string {
+export default function (n: number): string {
   if (n === 0) return "zero";
   const digitNumbers: number[] = n.toString().split("").map((x) => Number(x))
     .reverse();
   const digitStrings: string[] = [];
   for (let i = 0; i < digitNumbers.length; ++i) {
-    if (getTenPower(i + 1, indian)?.startsWith("{tens}")) {
+    if (getTenPower(i + 1)?.startsWith("{tens}")) {
       if (digitNumbers[i + 1] === 1) {
         digitStrings.push(
           `${teens[digitNumbers[i]]} ${
-            getTenPower(i, indian).replace(/\{ones\}\s?/, "")
+            getTenPower(i,).replace(/\{ones\}\s?/, "")
           }`,
         );
         ++i;
@@ -110,12 +89,11 @@ export default function (n: number, indian = false): string {
       }
     }
     digitStrings.push(
-      getTenPower(i, indian).replace(
+      getTenPower(i).replace(
         "{ones}",
         digits[digitNumbers[i]],
       ).replace("{tens}", tens[digitNumbers[i]]),
     );
-    console.log((i - digitNumbers.length ))
   }
   return digitStrings.reverse().join(" ");
 };
