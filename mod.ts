@@ -1,6 +1,6 @@
 import InWords from "./in_words.ts";
 
-const keyList: Record<DurationKeys, string> = {
+const keyList: Record<keyof DurationObj, string> = {
   d: "days",
   h: "hours",
   m: "minutes",
@@ -11,18 +11,13 @@ const keyList: Record<DurationKeys, string> = {
 };
 
 /**
- * @typedef {string} DurationKeys Units of time.
- */
-export type DurationKeys = "d" | "h" | "m" | "s" | "ms" | "us" | "ns";
-
-/**
  * For the array of values
  * @typedef {object} KeyValue
  * @property {string} type Type of key. One of d, h, m, s, ms, us, ns
  * @property {number} value Value of the time unit
  */
 export interface KeyValue {
-  type: DurationKeys;
+  type: keyof DurationObj;
   value: number;
 }
 
@@ -39,7 +34,6 @@ export interface KeyValue {
  * @property {number} ns Number of nanoseconds held by duration
  */
 export interface DurationObj {
-  raw: number;
   d: number;
   h: number;
   m: number;
@@ -49,8 +43,11 @@ export interface DurationObj {
   ns: number;
 }
 
+export interface DurationObjWithRaw extends DurationObj {
+  raw: number;
+}
+
 const BaseDurationObj: DurationObj = {
-  raw: 0,
   d: 0,
   h: 0,
   m: 0,
@@ -62,11 +59,9 @@ const BaseDurationObj: DurationObj = {
 
 /**
  * A simple JavaScript class used to parse time durations
- * @module Duration
- * @class
  */
 
-export class Duration {
+export class Duration implements DurationObj {
   raw: number;
   d: number;
   h: number;
@@ -77,6 +72,11 @@ export class Duration {
   ns: number;
   /**
    * Parse milliseconds into separate units of time.
+   * @example
+   * ```ts
+   * const d = new Duration(923431);
+   * console.log(d)
+   * ```
    * @param {number} timestamp Milliseconds to parse into a duration object.
    * @returns {<Duration>}
    */
@@ -94,6 +94,11 @@ export class Duration {
   }
   /**
    * An array of time units and their values.
+   * @example
+   * ```ts
+   * const d = new Duration(923431);
+   * console.log(d.array)
+   * ```
    * @returns {KeyValue[]}
    */
   get array(): KeyValue[] {
@@ -106,6 +111,27 @@ export class Duration {
       { type: "us", value: this.us },
       { type: "ns", value: this.ns },
     ];
+  }
+  get days() {
+    return this.d;
+  }
+  get hours() {
+    return this.h;
+  }
+  get minutes() {
+    return this.m;
+  }
+  get seconds() {
+    return this.s;
+  }
+  get milliseconds() {
+    return this.ms;
+  }
+  get microseconds() {
+    return this.us;
+  }
+  get nanoseconds() {
+    return this.ns;
   }
   /**
    * Alias for microseconds.
@@ -258,6 +284,15 @@ export class Duration {
   }
   /**
    * Update data to match any modification to values.
+   * @example
+   * ```ts
+   * const d = new Duration(923431);
+   * d.ms += 5;
+   * d.s += 7;
+   * console.log(d); // before update
+   * d.reload();
+   * console.log(d); // after update
+   * ```
    * @returns {Duration} Updated duration.
    */
   reload(): Duration {
@@ -396,8 +431,8 @@ export class Duration {
    * @returns {string} Formatted string.
    */
   toTimeString(
-    fromT: DurationKeys = "d",
-    toT: DurationKeys = "ns",
+    fromT: keyof DurationObj = "d",
+    toT: keyof DurationObj = "ns",
   ): string {
     if (
       typeof fromT !== "string" ||
@@ -518,7 +553,7 @@ export class Duration {
    * @param {string} str The string to read
    * @returns {DurationObj} obj Object with days, hours, mins, seconds and milliseconds
    */
-  static readString(str: string): DurationObj {
+  static readString(str: string): DurationObjWithRaw {
     str = str.replace(/\s\s/g, "");
     const days = matchUnit(str, "d") || matchUnit(str, "days") ||
       matchUnit(str, "day");
