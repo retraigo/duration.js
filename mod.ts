@@ -491,8 +491,8 @@ export class Duration implements DurationObj {
    * @returns {Duration} New duration between the two specified durations.
    */
   static between(
-    duration1: string | number | Duration,
-    duration2: string | number | Duration | undefined | null,
+    duration1: string | number | Duration | Date,
+    duration2: string | number | Duration | Date | undefined | null,
   ): Duration {
     let myDuration1: Duration, myDuration2: Duration;
     // Duration 1
@@ -502,6 +502,8 @@ export class Duration implements DurationObj {
       else myDuration1 = new Duration(+duration1);
     } else if (typeof duration1 === "number") {
       myDuration1 = new Duration(duration1);
+    } else if (duration1 instanceof Date) {
+      myDuration1 = new Duration(duration1.getTime());
     } else myDuration1 = new Duration();
     // Duration 2
     if (duration2 instanceof Duration) myDuration2 = duration2;
@@ -510,6 +512,8 @@ export class Duration implements DurationObj {
       else myDuration2 = new Duration(+duration2);
     } else if (typeof duration2 === "number") {
       myDuration2 = new Duration(duration2);
+    } else if (duration2 instanceof Date) {
+      myDuration2 = new Duration(duration2.getTime());
     } else myDuration2 = new Duration();
 
     // Doing stuff
