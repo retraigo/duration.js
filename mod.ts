@@ -61,7 +61,7 @@ const BaseDurationObj: DurationObj = {
  * A simple JavaScript class used to parse time durations
  */
 
-export class Duration implements DurationObj {
+export class Duration implements DurationObjWithRaw {
   raw: number;
   d: number;
   h: number;
@@ -632,6 +632,7 @@ export function addZero(num: number, digits = 3): string {
   const arr = new Array(digits).fill(0);
   return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
 }
+
 
 // For CommonJS support
 // module.exports = Duration;
