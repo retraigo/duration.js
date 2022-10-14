@@ -35,30 +35,30 @@ const tens = [
   "ninety",
 ];
 const tenPowers = [
-    "{ones}",
-    "{tens}",
-    "{ones} hundred and",
-    "{ones} thousand,",
-    "{tens}",
-    "{ones} hundred and",
-    "{ones} million,",
-    "{tens}",
-    "{ones} hundred and",
-    "{ones} billion,",
-    "{tens}",
-    "{ones} hundred and",
-    "{ones} trillion,",
-    "{tens}",
-    "{ones} hundred and",
-    "{ones} thousand,",
-    "{tens}",
-  ];
+  "{ones}",
+  "{tens}",
+  "{ones} hundred and",
+  "{ones} thousand,",
+  "{tens}",
+  "{ones} hundred and",
+  "{ones} million,",
+  "{tens}",
+  "{ones} hundred and",
+  "{ones} billion,",
+  "{tens}",
+  "{ones} hundred and",
+  "{ones} trillion,",
+  "{tens}",
+  "{ones} hundred and",
+  "{ones} thousand,",
+  "{tens}",
+];
 
 /**
  * Get the right template for the digit.
  * @param {number} i - Number's place to parse.
- * @param {boolean} indian - Whether to use Indian system. 
- * @returns 
+ * @param {boolean} indian - Whether to use Indian system.
+ * @returns
  */
 function getTenPower(i: number) {
   i = i % tenPowers.length;
@@ -68,7 +68,7 @@ function getTenPower(i: number) {
 /**
  * Parse a number into an english word string.
  * @param {number} n - The number to parse.
- * @param {boolean} indian  - Whether to use Indian system. 
+ * @param {boolean} indian  - Whether to use Indian system.
  * @returns {string} The number in words.
  */
 export default function (n: number): string {
@@ -81,7 +81,7 @@ export default function (n: number): string {
       if (digitNumbers[i + 1] === 1) {
         digitStrings.push(
           `${teens[digitNumbers[i]]} ${
-            getTenPower(i,).replace(/\{ones\}\s?/, "")
+            getTenPower(i).replace(/\{ones\}\s?/, "")
           }`,
         );
         ++i;
@@ -96,4 +96,4 @@ export default function (n: number): string {
     );
   }
   return digitStrings.reverse().join(" ");
-};
+}
