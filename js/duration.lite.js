@@ -2,7 +2,7 @@
 // deno-lint-ignore-file
 // This code was bundled using `deno bundle` and it's not recommended to edit it manually
 
-function useDuration(ms) {
+function Duration(ms) {
     return {
         d: Math.trunc(ms / 86400000),
         h: Math.trunc(ms / 3600000) % 24,
@@ -13,4 +13,4 @@ function useDuration(ms) {
         ns: Math.trunc(ms * 1000000) % 1000
     };
 }
-export { useDuration as useDuration };
+export { Duration as Duration };

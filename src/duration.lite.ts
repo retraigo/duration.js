@@ -2,7 +2,7 @@
  * A lighter alternative to duration.js
  * @param ms Time in milleseconds to parse into a duration.
  */
-export function useDuration(ms: number): DurationObj {
+export function Duration(ms: number): DurationObj {
   return {
     d: Math.trunc(ms / 86400000),
     h: Math.trunc(ms / 3600000) % 24,
