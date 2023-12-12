@@ -13,7 +13,7 @@ export function Duration(ms: number): DurationObj {
     ns: Math.trunc(ms * 1000000) % 1000,
   };
 }
-export interface DurationObj {
+export type DurationObj = {
   d: number;
   h: number;
   m: number;
