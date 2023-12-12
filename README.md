@@ -1,5 +1,4 @@
 # duration.js
-**For a lighter and simpler version, check out [nekooftheabyss/denouse](https://github.com/nekooftheabyss/denouse)
 
 ## Documentation
 Check out [Neko Of The Abyss](https://docs.nekooftheabyss.moe/duration) for documentation.
