@@ -101,5 +101,15 @@ console.log(duration.toTimeString())
 ```
 
 
+## Changes from V3
+
+- `Duration.prototype.stringify` has been removed in favor of:
+  - `Duration.prototype.toDescriptiveString`
+  - `Duration.prototype.toWordString`
+  - `Duration.prototype.toShortString`
+  - `Duration.prototype.toTimeString`
+- `addZero` has been removed. Use the built-in `String.prototype.padStart(n, "0")` instead.
+- `matchReg` has been renamed to `matchUnit`.
+
 ## Support
 Join our Discord server [here](https://discord.gg/A69vvdK)

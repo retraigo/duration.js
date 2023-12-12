@@ -12,7 +12,7 @@ const digits = [
     "six",
     "seven",
     "eight",
-    "nine", 
+    "nine"
 ];
 const teens = [
     "",
@@ -24,7 +24,7 @@ const teens = [
     "sixteen",
     "seventeen",
     "eighteen",
-    "nineteen", 
+    "nineteen"
 ];
 const tens = [
     "",
@@ -36,7 +36,7 @@ const tens = [
     "sixty",
     "seventy",
     "eighty",
-    "ninety", 
+    "ninety"
 ];
 const tenPowers = [
     "{ones}",
@@ -55,7 +55,7 @@ const tenPowers = [
     "{tens}",
     "{ones} hundred and",
     "{ones} thousand,",
-    "{tens}", 
+    "{tens}"
 ];
 function getTenPower(i) {
     i = i % tenPowers.length;
@@ -145,7 +145,7 @@ class Duration {
             {
                 type: "ns",
                 value: this.ns
-            }, 
+            }
         ];
     }
     get days() {
@@ -235,7 +235,7 @@ class Duration {
                 "ms",
                 "us",
                 "ns"
-            ].includes(x.type) ? addZero(x.value, 3) : addZero(x.value, 2));
+            ].includes(x.type) ? String(x.value).padStart(3, "0") : String(x.value).padStart(2, "0"));
     }
     reload() {
         const ts = this.d * 8.64e7 + this.h * 3600000 + this.m * 60000 + this.s * 1000 + this.ms + this.us / 1000 + this.ns / 1000000;
@@ -340,7 +340,7 @@ class Duration {
         return new Duration(myDuration1.raw > myDuration2.raw ? myDuration1.raw - myDuration2.raw : myDuration2.raw - myDuration1.raw);
     }
     static fromString(str, doNotParse = false) {
-        const { raw , d , h , m , s , ms , ns , us  } = Duration.readString(str);
+        const { raw, d, h, m, s, ms, ns, us } = Duration.readString(str);
         const ts = raw;
         const newDuration = new Duration(ts);
         if (doNotParse) {
@@ -387,11 +387,6 @@ function matchUnit(str, t) {
     if (!matched) return 0;
     return parseInt(matched[1].replace(t, ""));
 }
-function addZero(num, digits = 3) {
-    const arr = new Array(digits).fill(0);
-    return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
-}
 export { Duration as Duration };
 export { matchUnit as matchUnit };
-export { addZero as addZero };
 export { Duration as default };

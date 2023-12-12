@@ -33,7 +33,7 @@ export interface KeyValue {
  * @property {number} us Number of microseconds held by duration
  * @property {number} ns Number of nanoseconds held by duration
  */
-export interface DurationObj {
+export type DurationObj = {
   d: number;
   h: number;
   m: number;
@@ -112,30 +112,35 @@ export class Duration implements DurationObjWithRaw {
       { type: "ns", value: this.ns },
     ];
   }
+  /** Alias for this.d */
   get days() {
     return this.d;
   }
+  /** Alias for this.h */
   get hours() {
     return this.h;
   }
+  /** Alias for this.m */
   get minutes() {
     return this.m;
   }
+  /** Alias for this.s */
   get seconds() {
     return this.s;
   }
+  /** Alias for this.ms */
   get milliseconds() {
     return this.ms;
   }
+  /** Alias for this.us */
   get microseconds() {
     return this.us;
   }
+  /** Alias for this.ns */
   get nanoseconds() {
     return this.ns;
   }
-  /**
-   * Alias for microseconds.
-   */
+  /** Alias for this.us */
   get µs(): number {
     return this.us;
   }
@@ -278,8 +283,8 @@ export class Duration implements DurationObjWithRaw {
   getFormattedDurationArray(): string[] {
     return this.array.map((x) =>
       ["ms", "us", "ns"].includes(x.type)
-        ? addZero(x.value, 3)
-        : addZero(x.value, 2)
+        ? String(x.value).padStart(3, "0")
+        : String(x.value).padStart(2, "0")
     );
   }
   /**
@@ -621,16 +626,6 @@ export function matchUnit(str: string, t: string): number {
   const matched = reg.exec(str);
   if (!matched) return 0;
   return parseInt(matched[1].replace(t, ""));
-}
-
-/**
- * Add zeros to the beginning of a number till it reaches a certain digit count.
- * @param num Number to add zeros to.
- * @param digits Number of digits the number has to reach.
- */
-export function addZero(num: number, digits = 3): string {
-  const arr = new Array(digits).fill(0);
-  return `${arr.join("").slice(0, 0 - num.toString().length)}${num}`;
 }
 
 // For CommonJS support

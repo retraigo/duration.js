@@ -1,4 +1,4 @@
-export interface KeyList {
+export type KeyList = {
   d: string;
   h: string;
   m: string;
@@ -9,11 +9,11 @@ export interface KeyList {
 }
 export type DurationKeys = "d" | "h" | "m" | "s" | "ms" | "us" | "ns";
 
-export interface KeyValue {
+export type KeyValue = {
   type: DurationKeys;
   value: number;
 }
-export interface DurationObj {
+export type DurationObj = {
     raw: number;
     d: number;
     h: number;
