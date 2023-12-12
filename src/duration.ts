@@ -112,30 +112,35 @@ export class Duration implements DurationObjWithRaw {
       { type: "ns", value: this.ns },
     ];
   }
+  /** Alias for this.d */
   get days() {
     return this.d;
   }
+  /** Alias for this.h */
   get hours() {
     return this.h;
   }
+  /** Alias for this.m */
   get minutes() {
     return this.m;
   }
+  /** Alias for this.s */
   get seconds() {
     return this.s;
   }
+  /** Alias for this.ms */
   get milliseconds() {
     return this.ms;
   }
+  /** Alias for this.us */
   get microseconds() {
     return this.us;
   }
+  /** Alias for this.ns */
   get nanoseconds() {
     return this.ns;
   }
-  /**
-   * Alias for microseconds.
-   */
+  /** Alias for this.us */
   get µs(): number {
     return this.us;
   }
