@@ -33,7 +33,7 @@ export interface KeyValue {
  * @property {number} us Number of microseconds held by duration
  * @property {number} ns Number of nanoseconds held by duration
  */
-export interface DurationObj {
+export type DurationObj = {
   d: number;
   h: number;
   m: number;
