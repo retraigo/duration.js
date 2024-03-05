@@ -1,0 +1,14 @@
+{
+  "name": "@retraigo/duration",
+  "version": "4.1.1",
+  "exclude": [
+    ".github",
+    ".vscode",
+    ".npmignore",
+    ".gitignore"
+  ],
+  "exports": {
+    ".": "./src/duration.ts",
+    "./lite": "./src/duration.lite.ts"
+  }
+}
