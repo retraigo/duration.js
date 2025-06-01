@@ -926,6 +926,20 @@ export class Duration implements DurationObjWithRaw {
       when instanceof Date ? when.getTime() : when,
     );
   }
+  #customInspect(): string {
+    let res = `Duration {\n`;
+    for (const {type: k, value: v} of this.array) {
+      res += `  ${k}: ${v},\n`
+    }
+    res += `  raw: ${this.raw},\n`
+    return res + `}`
+  }
+  [Symbol.for("Deno.customInspect")](): string {
+    return this.#customInspect();
+  }
+  [Symbol.for("nodejs.util.inspect.custom")](): string {
+    return this.#customInspect();
+  }
 }
 
 /**
