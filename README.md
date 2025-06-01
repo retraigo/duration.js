@@ -28,7 +28,7 @@ import Duration from "npm:@retraigo/duration.js@5.0.0";
 
 const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
 
-new Duration(); // Get duration since midnight
+new Duration(); // Just 0
 
 new Duration(3545346); // A random duration
 
