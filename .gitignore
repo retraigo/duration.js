@@ -3,3 +3,4 @@ dumpster.js
 testing
 dist
 node_modules
+deno.lock

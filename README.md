@@ -1,6 +1,7 @@
 # duration.js
 
 ## Documentation
+
 Check out [JSR](https://jsr.io/@retraigo/duration/doc) for documentation.
 
 Duration follows the `performance.now()` format, so microseconds and nanoseconds

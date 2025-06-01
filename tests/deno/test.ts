@@ -21,6 +21,21 @@ Deno.test({
     assertEquals(duration.minutes, 0);
     assertEquals(duration.hours, 0);
     assertEquals(duration.days, 0);
+    assertEquals(duration.valueOf(), 0);
+  },
+});
+
+Deno.test({
+  name: "Adding two durations.",
+  fn() {
+    const duration1 = new Duration(121000);
+    const duration2 = new Duration(119000);
+
+    const diff = duration1.plus(duration2);
+    assertEquals(diff, new Duration(240000));
+
+    const diff2 = duration1.plus("119 seconds");
+    assertEquals(diff2, new Duration(240000));
   },
 });
 
