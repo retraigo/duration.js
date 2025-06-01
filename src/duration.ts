@@ -812,9 +812,7 @@ export class Duration implements DurationObjWithRaw {
 
     // Doing stuff
     return new Duration(
-      myDuration1.raw > myDuration2.raw
-        ? myDuration1.raw - myDuration2.raw
-        : myDuration2.raw - myDuration1.raw,
+      myDuration1.raw - myDuration2.raw,
     );
   }
 
@@ -916,6 +914,16 @@ export class Duration implements DurationObjWithRaw {
   }
 
   /**
+   * Get duration since a moment in time AFTER the code started
+   * running.
+   * @param when Timestamp in the past
+   * @returns Duration
+   */
+  static sinceHrTime(when: number): Duration {
+    return Duration.between(when, performance.now());
+  }
+
+  /**
    * Get duration till a moment in time.
    * @param when Timestamp or Date in the future
    * @returns Duration
@@ -926,13 +934,24 @@ export class Duration implements DurationObjWithRaw {
       when instanceof Date ? when.getTime() : when,
     );
   }
+  
+  /**
+   * Get duration till a moment in time AFTER the code started
+   * running.
+   * @param when Timestamp in the future
+   * @returns Duration
+   */
+  static tillHrTime(when: number): Duration {
+    return Duration.between(performance.now(), when);
+  }
+
   #customInspect(): string {
     let res = `Duration {\n`;
-    for (const {type: k, value: v} of this.array) {
-      res += `  ${k}: ${v},\n`
+    for (const { type: k, value: v } of this.array) {
+      res += `  ${k}: ${v},\n`;
     }
-    res += `  raw: ${this.raw},\n`
-    return res + `}`
+    res += `  raw: ${this.raw},\n`;
+    return res + `}`;
   }
   [Symbol.for("Deno.customInspect")](): string {
     return this.#customInspect();
