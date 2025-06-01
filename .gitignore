@@ -1,3 +1,5 @@
 .pnpm-debug.log
 dumpster.js
 testing
+dist
+node_modules

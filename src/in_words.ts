@@ -57,7 +57,6 @@ const tenPowers = [
 /**
  * Get the right template for the digit.
  * @param {number} i - Number's place to parse.
- * @param {boolean} indian - Whether to use Indian system.
  * @returns
  */
 function getTenPower(i: number) {
@@ -68,7 +67,6 @@ function getTenPower(i: number) {
 /**
  * Parse a number into an english word string.
  * @param {number} n - The number to parse.
- * @param {boolean} indian  - Whether to use Indian system.
  * @returns {string} The number in words.
  */
 export default function (n: number): string {
