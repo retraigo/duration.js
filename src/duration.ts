@@ -175,7 +175,7 @@ export class Duration implements DurationObjWithRaw {
    * const d = new Duration(923431);
    * console.log(d)
    * ```
-   * @param {number} timestamp Milliseconds to parse into a duration object.
+   * @param timestamp Milliseconds to parse into a duration object.
    * @returns {Duration}
    */
   constructor(timestamp: number | string | Duration = 0) {
@@ -360,11 +360,18 @@ export class Duration implements DurationObjWithRaw {
   }
 
   /**
+   * Get the absolute value of duration.
+   */
+  abs(): Duration {
+    return new Duration(Math.abs(this.raw))
+  }
+
+  /**
    * @deprecated since v5.1.0.
    * Set the value of `d` directly instead with `duration.d += n`.
    *
    * Add more days to the duration.
-   * @param {number} n Number of days to add.
+   * @param n Number of days to add.
    */
   addDays(n: number): Duration {
     this.d += n;
@@ -376,8 +383,8 @@ export class Duration implements DurationObjWithRaw {
    * Set the value of `h` directly instead with `duration.h += n`.
    *
    * Add more hours to the duration.
-   * @param {number} n Number of hours to add.
-   * @returns {Duration} The updated duration.
+   * @param n Number of hours to add.
+   * @returns The updated duration.
    */
   addHours(n: number): Duration {
     this.h += n;
@@ -389,8 +396,8 @@ export class Duration implements DurationObjWithRaw {
    * Set the value of `m` directly instead with `duration.m += n`.
    *
    * Add more minutes to the duration.
-   * @param {number} n Number of minutes to add.
-   * @returns {Duration} The updated duration.
+   * @param n Number of minutes to add.
+   * @returns The updated duration.
    */
   addMinutes(n: number): Duration {
     this.m += n;
@@ -402,8 +409,8 @@ export class Duration implements DurationObjWithRaw {
    * Set the value of `s` directly instead with `duration.s += n`.
    *
    * Add more seconds to the duration.
-   * @param {number} n Number of seconds to add.
-   * @returns {Duration} The updated duration.
+   * @param n Number of seconds to add.
+   * @returns The updated duration.
    */
   addSeconds(n: number): Duration {
     this.s += n;
@@ -415,8 +422,8 @@ export class Duration implements DurationObjWithRaw {
    * Set the value of `ms` directly instead with `duration.ms += n`.
    *
    * Add more milliseconds to the duration.
-   * @param {number} n Number of milliseconds to add.
-   * @returns {Duration} The updated duration.
+   * @param n Number of milliseconds to add.
+   * @returns The updated duration.
    */
   addMilliseconds(n: number): Duration {
     this.ms += n;
@@ -428,8 +435,8 @@ export class Duration implements DurationObjWithRaw {
    * Set the value of `us` directly instead with `duration.us += n`.
    *
    * Add more microseconds to the duration.
-   * @param {number} n Number of microseconds to add.
-   * @returns {Duration} The updated duration.
+   * @param n Number of microseconds to add.
+   * @returns The updated duration.
    */
   addMicroseconds(n: number): Duration {
     this.us += n;
@@ -441,8 +448,8 @@ export class Duration implements DurationObjWithRaw {
    * Set the value of `ns` directly instead with `duration.ns += n`.
    *
    * Add more nanoseconds to the duration.
-   * @param {number} n Number of nanoseconds to add.
-   * @returns {Duration} The updated duration.
+   * @param n Number of nanoseconds to add.
+   * @returns The updated duration.
    */
   addNanoseconds(n: number): Duration {
     this.ns += n;
@@ -934,7 +941,7 @@ export class Duration implements DurationObjWithRaw {
       when instanceof Date ? when.getTime() : when,
     );
   }
-  
+
   /**
    * Get duration till a moment in time AFTER the code started
    * running.
