@@ -1,12 +1,12 @@
 {
   "name": "@retraigo/duration.js",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "type": "module",
-  "description": "Get the formatted time duration",
+  "description": "Parse, modify, and format time durations.",
   "exports": {
-		".": "./dist/duration.js",
+    ".": "./dist/duration.js",
     "./lite": "./dist/duration_lite.js"
-	},
+  },
   "scripts": {
     "test": "node test",
     "build": "tsc"
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/retraigo/duration.js#readme",
   "devDependencies": {
-		"@types/node": "^22.7.5",
-		"typescript": "^5.7"
+    "@types/node": "^22.7.5",
+    "typescript": "^5.7"
   }
 }

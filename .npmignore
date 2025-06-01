@@ -2,3 +2,7 @@
 dumpster.js
 .pnpm-debug.log
 mod.ts
+tests
+deno.json
+deno.lock
+.github

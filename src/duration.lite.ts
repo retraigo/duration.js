@@ -2,7 +2,7 @@
  * A lighter alternative to duration.js.
  * ```ts
  * import { Duration } from "jsr:@retraigo/duration@4/lite"
- * 
+ *
  * Duration(700908)
  * // { d: 0, h: 0, m: 11, s: 40, ms: 908, us: 0, ns: 0 }
  * ```
@@ -33,4 +33,4 @@ export type DurationObj = {
   ms: number;
   us: number;
   ns: number;
-}
+};

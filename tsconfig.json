@@ -1,17 +1,17 @@
 {
-	"compilerOptions": {
-		"outDir": "dist",
-		"target": "es2022",
-        "moduleResolution": "nodenext",
-        "module": "NodeNext",
-		"lib": [
-			"es2022"
-		],
-        "rewriteRelativeImportExtensions": true,
-        "declaration": true,
-		"isolatedModules": true
-	},
-    "include": [
-		"src",
-	]
+  "compilerOptions": {
+    "outDir": "dist",
+    "target": "es2022",
+    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "lib": [
+      "es2022"
+    ],
+    "rewriteRelativeImportExtensions": true,
+    "declaration": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "src"
+  ]
 }

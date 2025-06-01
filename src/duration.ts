@@ -1,6 +1,6 @@
 /**
  * A library for formatting time duration.
- * 
+ *
  * ## Usage
  *
  * ### Basic Usage
@@ -19,7 +19,7 @@
  *
  * new Duration(0); // Just 0
  *
- * new Duration(-1); // Negative duration returns 0 too
+ * new Duration(-1); // Negative duration returns a negative time
  * ```
  *
  * ### Duration since a timestamp
@@ -169,19 +169,29 @@ export class Duration implements DurationObjWithRaw {
    * console.log(d)
    * ```
    * @param {number} timestamp Milliseconds to parse into a duration object.
-   * @returns {<Duration>}
+   * @returns {Duration}
    */
-  constructor(timestamp: number = Duration.getCurrentDuration()) {
-    if (timestamp < 0) timestamp = 0; // Prevent negative time
-    timestamp = Number(timestamp);
-    this.raw = timestamp;
-    this.d = Math.trunc(timestamp / 86400000);
-    this.h = Math.trunc(timestamp / 3600000) % 24;
-    this.m = Math.trunc(timestamp / 60000) % 60;
-    this.s = Math.trunc(timestamp / 1000) % 60;
-    this.ms = Math.trunc(timestamp) % 1000;
-    this.us = Math.trunc(timestamp * 1000) % 1000;
-    this.ns = Math.trunc(timestamp * 1000000) % 1000;
+  constructor(timestamp: number | string | Duration = 0) {
+    let raw: number;
+    if (typeof timestamp === "string") {
+      raw = Duration.#readString(timestamp).raw;
+    } else if (timestamp instanceof Duration) {
+      raw = timestamp.raw;
+    } else if (typeof timestamp === "number") {
+      raw = timestamp;
+    } else {
+      throw new TypeError(
+        `Unsupported parameter of type ${typeof timestamp} for Duration.`,
+      );
+    }
+    this.raw = raw;
+    this.d = Math.trunc(raw / 8.64e7);
+    this.h = Math.trunc(raw / 3_600_000) % 24;
+    this.m = Math.trunc(raw / 60_000) % 60;
+    this.s = Math.trunc(raw / 1_000) % 60;
+    this.ms = Math.trunc(raw) % 1_000;
+    this.us = Math.trunc(raw * 1_000) % 1000;
+    this.ns = Math.trunc(raw * 1_000_000) % 1000;
   }
   /**
    * An array of time units and their values.
@@ -242,7 +252,7 @@ export class Duration implements DurationObjWithRaw {
   get json(): DurationObj {
     return this.array.reduce(
       (acc, stuff) => ((acc[stuff.type] = stuff.value), acc),
-      BaseDurationObj
+      BaseDurationObj,
     );
   }
   /**
@@ -365,6 +375,14 @@ export class Duration implements DurationObjWithRaw {
     return new Duration(this.raw);
   }
   /**
+   * Divide the duration by a scalar.
+   * @param scalar Another duration
+   * @returns Duration divided by a scalar
+   */
+  dividedBy(scalar: number): Duration {
+    return new Duration(this.raw / scalar);
+  }
+  /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms (Deprecated. Use Duration#toString())
    * @returns {string} Formatted string
    */
@@ -379,6 +397,33 @@ export class Duration implements DurationObjWithRaw {
     );
   }
   /**
+   * Subtract a duration from this duration and return a
+   * new duration with the result.
+   * @param {string|number|Duration} that Another duration
+   * @returns
+   */
+  minus(that: Duration | number | string): Duration {
+    return Duration.between(this, that);
+  }
+  /**
+   * Multiply the duration by a scalar.
+   * @param scalar Another duration
+   * @returns Duration multiplied by a scalar
+   */
+  multipliedBy(scalar: number): Duration {
+    return new Duration(this.raw * scalar);
+  }
+  /**
+   * Add a duration to this duration and return a
+   * new duration with the result.
+   * @param that Another duration
+   * @returns
+   */
+  plus(that: Duration | number | string): Duration {
+    const thatDuration = new Duration(that);
+    return new Duration(this.raw + thatDuration.raw);
+  }
+  /**
    * Update data to match any modification to values.
    * @example
    * ```ts
@@ -389,11 +434,10 @@ export class Duration implements DurationObjWithRaw {
    * d.reload();
    * console.log(d); // after update
    * ```
-   * @returns {Duration} Updated duration.
+   * @returns Updated duration.
    */
   reload(): Duration {
-    const ts =
-      this.d * 8.64e7 +
+    const ts = this.d * 8.64e7 +
       this.h * 3600000 +
       this.m * 60000 +
       this.s * 1000 +
@@ -414,8 +458,8 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Set days of the duration.
-   * @param {number} n Number of days to set.
-   * @returns {Duration} The updated duration.
+   * @param n Number of days to set.
+   * @returns The updated duration.
    */
   setDays(n: number): Duration {
     this.d = n;
@@ -423,8 +467,8 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Set hours of the duration.
-   * @param {number} n Number of hours to set.
-   * @returns {Duration} The updated duration.
+   * @param n Number of hours to set.
+   * @returns The updated duration.
    */
   setHours(n: number): Duration {
     this.h = n;
@@ -432,8 +476,8 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Set minutes of the duration.
-   * @param {number} n Number of minutes to set.
-   * @returns {Duration} The updated duration.
+   * @param n Number of minutes to set.
+   * @returns The updated duration.
    */
   setMinutes(n: number): Duration {
     this.m = n;
@@ -441,8 +485,8 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Set seconds of the duration.
-   * @param {number} n Number of seconds to set.
-   * @returns {Duration} The updated duration.
+   * @param n Number of seconds to set.
+   * @returns The updated duration.
    */
   setSeconds(n: number): Duration {
     this.s = n;
@@ -450,8 +494,8 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Set milliseconds of the duration.
-   * @param {number} n Number of milliseconds to set.
-   * @returns {Duration} The updated duration.
+   * @param n Number of milliseconds to set.
+   * @returns The updated duration.
    */
   setMilliseconds(n: number): Duration {
     this.ms = n;
@@ -459,8 +503,8 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Set microseconds of the duration.
-   * @param {number} n Number of microseconds to set.
-   * @returns {Duration} The updated duration.
+   * @param n Number of microseconds to set.
+   * @returns The updated duration.
    */
   setMicroseconds(n: number): Duration {
     this.us = n;
@@ -468,8 +512,8 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Set nanoseconds of the duration.
-   * @param {number} n Number of nanoseconds to set.
-   * @returns {Duration} The updated duration.
+   * @param n Number of nanoseconds to set.
+   * @returns The updated duration.
    */
   setNanoseconds(n: number): Duration {
     this.ns = n;
@@ -477,57 +521,75 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Get a formatted, human-readable string of the duration.
-   * @param {string[]} values The values required to display.
-   * @returns {string} formatted string The formatted string result.
+   * @param values The values required to display.
+   * @returns formatted string The formatted string result.
    */
-  toDescriptiveString(values: string[] | null = []): string {
+  toDescriptiveString(skipZeroDurations?: true): string;
+  toDescriptiveString(values: string[] | null | true = []): string {
     if (!Array.isArray(values) || values.length == 0) {
-      return `${this.array
-        .map((x) => `${x.value} ${keyList[x.type]}`)
-        .join(", ")}`;
+      return `${
+        this.array
+          .filter((x) => (values === true) ? x.value !== 0 : true)
+          .map((x) =>
+            `${x.value} ${
+              x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
+            }`
+          )
+          .join(", ")
+      }`;
     }
-    return `${this.array
-      .filter((x) => values.includes(x.type))
-      .map((x) => `${x.value} ${keyList[x.type]}`)
-      .join(", ")}`;
+    return `${
+      this.array
+        .filter((x) => values.includes(x.type))
+        .map((x) => `${x.value} ${keyList[x.type]}`)
+        .join(", ")
+    }`;
   }
   /**
    * Convert the Duration into a plain object.
-   * @returns {DurationObj} Duration object
+   * @returns Duration object
    */
   toJSON(): DurationObj {
     return this.json;
   }
+
   /**
    * Get a formatted, human-readable string of the duration.
-   * @param {string[]} values The values required to display.
-   * @returns {string} formatted string The formatted string result.
+   * @param values The values required to display.
+   * @returns formatted string The formatted string result.
    */
-  toShortString(values: string[] | null = []): string {
+  toShortString(skipZeroDurations?: true): string;
+  toShortString(values: string[] | null | true = []): string {
     if (!Array.isArray(values) || values.length == 0) {
-      return `${this.array.map((x) => `${x.value}${x.type}`).join(" ")}`;
+      return `${
+        this.array
+          .filter((x) => (values === true) ? x.value !== 0 : true)
+          .map((x) => `${x.value}${x.type}`).join(" ")
+      }`;
     }
-    return `${this.array
-      .filter((x) => values.includes(x.type))
-      .map((x) => `${x.value}${x.type}`)
-      .join(" ")}`;
+    return `${
+      this.array
+        .filter((x) => values.includes(x.type))
+        .map((x) => `${x.value}${x.type}`)
+        .join(" ")
+    }`;
   }
   /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms
-   * @returns {string} Formatted string
+   * @returns Formatted string
    */
   toString(): string {
     return `${this.getFormattedDurationArray().join(":")}`;
   }
   /**
    * Get a duration formatted using colons (:).
-   * @param {string} fromT Unit to display from.
-   * @param {string} toT Unit to display upto.
-   * @returns {string} Formatted string.
+   * @param fromT Unit to display from.
+   * @param toT Unit to display upto.
+   * @returns Formatted string.
    */
   toTimeString(
     fromT: keyof DurationObj = "d",
-    toT: keyof DurationObj = "ns"
+    toT: keyof DurationObj = "ns",
   ): string {
     if (
       typeof fromT !== "string" ||
@@ -545,49 +607,60 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Get a human-readable string of the duration in words.
-   * @param {string[]} values The values required to display.
-   * @returns {string} formatted string The formatted string result.
+   * @param values The values required to display.
+   * @returns formatted string The formatted string result.
    */
-  toWordString(values: string[] | null = []): string {
+  toWordString(skipZeroDurations?: true): string;
+  toWordString(values: string[] | null | true = []): string {
     if (!Array.isArray(values) || values.length === 0) {
-      return `${this.array
-        .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
-        .join(", ")}`;
+      return `${
+        this.array
+          .filter((x) => (values === true) ? x.value !== 0 : true)
+          .map((x) =>
+            `${InWords(x.value).trim()} ${
+              x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
+            }`
+          )
+          .join(", ")
+      }`;
     }
     if (values.length > 0) {
-      return `${this.array
-        .filter((x) => values.includes(x.type))
-        .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
-        .join(", ")}`;
+      return `${
+        this.array
+          .filter((x) => values.includes(x.type))
+          .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+          .join(", ")
+      }`;
     }
-    return `${this.array
-      .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
-      .join(", ")}`;
+    return `${
+      this.array
+        .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+        .join(", ")
+    }`;
   }
 
   /**
    * Just the valueOf method.
-   * @returns {number} Raw milliseconds of the duration
+   * @returns Raw milliseconds of the duration
    */
   valueOf(): number {
     return this.raw;
   }
   /**
    * Get the duration between two timestamps or two other durations.
-   * @param {string|number|Duration} duration1 Duration/Timestamp to find duration from.
-   * @param {string|number|Duration} duration2 Duration/Timestamp to find duration upto.
-   * @returns {Duration} New duration between the two specified durations.
+   * @param duration1 Duration/Timestamp to find duration from.
+   * @param duration2 Duration/Timestamp to find duration upto.
+   * @returns New duration between the two specified durations.
    */
   static between(
     duration1: string | number | Duration | Date,
-    duration2: string | number | Duration | Date | undefined | null
+    duration2: string | number | Duration | Date | undefined | null,
   ): Duration {
     let myDuration1: Duration, myDuration2: Duration;
     // Duration 1
     if (duration1 instanceof Duration) myDuration1 = duration1;
     else if (typeof duration1 === "string") {
-      if (isNaN(+duration1)) myDuration1 = Duration.fromString(duration1);
-      else myDuration1 = new Duration(+duration1);
+      myDuration1 = new Duration(duration1);
     } else if (typeof duration1 === "number") {
       myDuration1 = new Duration(duration1);
     } else if (duration1 instanceof Date) {
@@ -596,8 +669,7 @@ export class Duration implements DurationObjWithRaw {
     // Duration 2
     if (duration2 instanceof Duration) myDuration2 = duration2;
     else if (typeof duration2 === "string") {
-      if (isNaN(+duration2)) myDuration2 = Duration.fromString(duration2);
-      else myDuration2 = new Duration(+duration2);
+      myDuration2 = new Duration(duration2);
     } else if (typeof duration2 === "number") {
       myDuration2 = new Duration(duration2);
     } else if (duration2 instanceof Date) {
@@ -608,17 +680,16 @@ export class Duration implements DurationObjWithRaw {
     return new Duration(
       myDuration1.raw > myDuration2.raw
         ? myDuration1.raw - myDuration2.raw
-        : myDuration2.raw - myDuration1.raw
+        : myDuration2.raw - myDuration1.raw,
     );
   }
   /**
    * Reads a given string and parses a duration from it.
-   * @param {string} str A string which could contain a duration
-   * @param {string} doNotParse Directly return the values read
-   * @returns {Duration}
+   * @param str A string which could contain a duration
+   * @param doNotParse Directly return the values read
    */
   static fromString(str: string, doNotParse = false): Duration {
-    const { raw, d, h, m, s, ms, ns, us } = Duration.readString(str);
+    const { raw, d, h, m, s, ms, ns, us } = Duration.#readString(str);
     const ts = raw;
 
     const newDuration = new Duration(ts);
@@ -634,10 +705,10 @@ export class Duration implements DurationObjWithRaw {
     return newDuration;
   }
   /**
-   * Get the duration till next midnight in milliseconds.
-   * @returns {number} Duration in milliseconds till the next midnight
+   * Get the duration since midnight in milliseconds.
+   * @returns Duration in milliseconds since 0 hours
    */
-  static getCurrentDuration(): number {
+  static getCurrentDayDuration(): number {
     return Date.now() - new Date().setHours(0, 0, 0, 0);
   }
   /**
@@ -645,46 +716,40 @@ export class Duration implements DurationObjWithRaw {
    * @param {string} str The string to read
    * @returns {DurationObj} obj Object with days, hours, mins, seconds and milliseconds
    */
-  static readString(str: string): DurationObjWithRaw {
+  static #readString(str: string): DurationObjWithRaw {
     str = str.replace(/\s\s/g, "");
-    const days =
-      matchUnit(str, "d") || matchUnit(str, "days") || matchUnit(str, "day");
-    const hours =
-      matchUnit(str, "h") || matchUnit(str, "hours") || matchUnit(str, "hour");
-    const minutes =
-      matchUnit(str, "m") ||
+    const days = matchUnit(str, "d") || matchUnit(str, "days") ||
+      matchUnit(str, "day");
+    const hours = matchUnit(str, "h") || matchUnit(str, "hours") ||
+      matchUnit(str, "hour");
+    const minutes = matchUnit(str, "m") ||
       matchUnit(str, "min") ||
       matchUnit(str, "minute") ||
       matchUnit(str, "mins") ||
       matchUnit(str, "minutes");
-    const seconds =
-      matchUnit(str, "s") ||
+    const seconds = matchUnit(str, "s") ||
       matchUnit(str, "sec") ||
       matchUnit(str, "second") ||
       matchUnit(str, "secs") ||
       matchUnit(str, "seconds");
-    const milliseconds =
-      matchUnit(str, "ms") ||
+    const milliseconds = matchUnit(str, "ms") ||
       matchUnit(str, "millisecond") ||
       matchUnit(str, "milliseconds");
-    const nanoseconds =
-      matchUnit(str, "ns") ||
+    const nanoseconds = matchUnit(str, "ns") ||
       matchUnit(str, "nanosecond") ||
       matchUnit(str, "nanoseconds");
-    const microseconds =
-      matchUnit(str, "µs") ||
+    const microseconds = matchUnit(str, "µs") ||
       matchUnit(str, "microsecond") ||
       matchUnit(str, "microseconds") ||
       matchUnit(str, "us");
     return {
-      raw:
-        days * 8.64e7 +
-        hours * 3600000 +
-        minutes * 60000 +
-        seconds * 1000 +
+      raw: days * 8.64e7 +
+        hours * 3_600_000 +
+        minutes * 60_000 +
+        seconds * 1_000 +
         milliseconds +
-        microseconds / 1000 +
-        nanoseconds / 1000000,
+        microseconds / 1_000 +
+        nanoseconds / 1_000_000,
       d: days,
       h: hours,
       m: minutes,
@@ -696,13 +761,25 @@ export class Duration implements DurationObjWithRaw {
   }
   /**
    * Get duration since a moment in time.
-   * @param {Date|number} when
+   * @param when Timestamp or Date in the past
    * @returns {Duration} Duration
    */
   static since(when: number | Date): Duration {
     return Duration.between(
       when instanceof Date ? when.getTime() : when,
-      Date.now()
+      Date.now(),
+    );
+  }
+
+  /**
+   * Get duration till a moment in time.
+   * @param when Timestamp or Date in the future
+   * @returns {Duration} Duration
+   */
+  static till(when: number | Date): Duration {
+    return Duration.between(
+      Date.now(),
+      when instanceof Date ? when.getTime() : when,
     );
   }
 }
