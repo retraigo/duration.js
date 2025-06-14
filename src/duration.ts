@@ -150,7 +150,6 @@ const BaseDurationObj: DurationObj = {
 /**
  * A simple JavaScript class used to parse time durations
  */
-
 export class Duration implements DurationObjWithRaw {
   /** Number of milliseconds in a microsecond. */
   static MICROSECOND = 1 / 1_000;
@@ -176,7 +175,6 @@ export class Duration implements DurationObjWithRaw {
    * console.log(d)
    * ```
    * @param timestamp Milliseconds to parse into a duration object.
-   * @returns {Duration}
    */
   constructor(timestamp: number | string | Duration = 0) {
     let raw: number;
@@ -529,6 +527,11 @@ export class Duration implements DurationObjWithRaw {
     return new Duration(this.raw / scalar);
   }
 
+  equals(that: Duration): boolean {
+    if (this.raw === that.raw) return true;
+    return false;
+  }
+
   /**
    * Get a simple formatted duration in the form dd:hh:mm:ss:ms (Deprecated. Use Duration#toString())
    * @returns Formatted string
@@ -562,6 +565,15 @@ export class Duration implements DurationObjWithRaw {
    */
   multipliedBy(scalar: number): Duration {
     return new Duration(this.raw * scalar);
+  }
+
+  /**
+   * Get the negated value of the duration. This
+   * is the opposite of `abs()`.
+   * @returns Negated duration
+   */
+  negated(): Duration {
+    return new Duration(-Math.abs(this.raw));
   }
 
   /**
