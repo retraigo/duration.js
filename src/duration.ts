@@ -190,7 +190,7 @@ export class Duration implements DurationObjWithRaw {
       raw = timestamp;
     } else {
       throw new TypeError(
-        `Unsupported parameter of type ${typeof timestamp} for Duration.`
+        `Unsupported parameter of type ${typeof timestamp} for Duration.`,
       );
     }
     this.raw = raw;
@@ -357,7 +357,7 @@ export class Duration implements DurationObjWithRaw {
   get json(): DurationObj {
     return this.array.reduce(
       (acc, stuff) => ((acc[stuff.type] = stuff.value), acc),
-      BaseDurationObj
+      BaseDurationObj,
     );
   }
 
@@ -601,25 +601,29 @@ export class Duration implements DurationObjWithRaw {
   toDescriptiveString(values: string[]): string;
   toDescriptiveString(values: string[] | null | true = []): string {
     if (!Array.isArray(values) || values.length == 0) {
-      return `${this.array
-        .filter((x) => (values === true ? x.value !== 0 : true))
+      return `${
+        this.array
+          .filter((x) => (values === true ? x.value !== 0 : true))
+          .map(
+            (x) =>
+              `${x.value} ${
+                x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
+              }`,
+          )
+          .join(", ")
+      }`;
+    }
+    return `${
+      this.array
+        .filter((x) => values.includes(x.type))
         .map(
           (x) =>
             `${x.value} ${
               x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
-            }`
+            }`,
         )
-        .join(", ")}`;
-    }
-    return `${this.array
-      .filter((x) => values.includes(x.type))
-      .map(
-        (x) =>
-          `${x.value} ${
-            x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
-          }`
-      )
-      .join(", ")}`;
+        .join(", ")
+    }`;
   }
 
   /**
@@ -652,15 +656,19 @@ export class Duration implements DurationObjWithRaw {
   toShortString(skipZeroDurations?: true): string;
   toShortString(values: string[] | null | true = []): string {
     if (!Array.isArray(values) || values.length == 0) {
-      return `${this.array
-        .filter((x) => (values === true ? x.value !== 0 : true))
-        .map((x) => `${x.value}${x.type}`)
-        .join(" ")}`;
+      return `${
+        this.array
+          .filter((x) => (values === true ? x.value !== 0 : true))
+          .map((x) => `${x.value}${x.type}`)
+          .join(" ")
+      }`;
     }
-    return `${this.array
-      .filter((x) => values.includes(x.type))
-      .map((x) => `${x.value}${x.type}`)
-      .join(" ")}`;
+    return `${
+      this.array
+        .filter((x) => values.includes(x.type))
+        .map((x) => `${x.value}${x.type}`)
+        .join(" ")
+    }`;
   }
 
   /**
@@ -680,7 +688,7 @@ export class Duration implements DurationObjWithRaw {
    */
   toTimeString(
     fromT: keyof DurationObj = "d",
-    toT: keyof DurationObj = "ns"
+    toT: keyof DurationObj = "ns",
   ): string {
     if (
       typeof fromT !== "string" ||
@@ -706,30 +714,36 @@ export class Duration implements DurationObjWithRaw {
   toWordString(values: string[]): string;
   toWordString(values: string[] | null | true = []): string {
     if (!Array.isArray(values) || values.length === 0) {
-      return `${this.array
-        .filter((x) => (values === true ? x.value !== 0 : true))
-        .map(
-          (x) =>
-            `${InWords(x.value).trim()} ${
-              x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
-            }`
-        )
-        .join(", ")}`;
+      return `${
+        this.array
+          .filter((x) => (values === true ? x.value !== 0 : true))
+          .map(
+            (x) =>
+              `${InWords(x.value).trim()} ${
+                x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
+              }`,
+          )
+          .join(", ")
+      }`;
     }
     if (values.length > 0) {
-      return `${this.array
-        .filter((x) => values.includes(x.type))
-        .map(
-          (x) =>
-            `${InWords(x.value).trim()} ${
-              x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
-            }`
-        )
-        .join(", ")}`;
+      return `${
+        this.array
+          .filter((x) => values.includes(x.type))
+          .map(
+            (x) =>
+              `${InWords(x.value).trim()} ${
+                x.value === 1 ? keyList[x.type].slice(0, -1) : keyList[x.type]
+              }`,
+          )
+          .join(", ")
+      }`;
     }
-    return `${this.array
-      .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
-      .join(", ")}`;
+    return `${
+      this.array
+        .map((x) => `${InWords(x.value).trim()} ${keyList[x.type]}`)
+        .join(", ")
+    }`;
   }
 
   /**
@@ -748,7 +762,7 @@ export class Duration implements DurationObjWithRaw {
    */
   static between(
     duration1: string | number | Duration | Date,
-    duration2: string | number | Duration | Date | undefined | null
+    duration2: string | number | Duration | Date | undefined | null,
   ): Duration {
     let myDuration1: Duration, myDuration2: Duration;
     // Duration 1
@@ -783,7 +797,7 @@ export class Duration implements DurationObjWithRaw {
   static fromString(str: string, doNotParse: false): Duration;
   static fromString(
     str: string,
-    doNotParse = false
+    doNotParse = false,
   ): Duration | DurationObjWithRaw {
     const { raw, d, h, m, s, ms, ns, us } = Duration.#readString(str);
 
@@ -808,11 +822,13 @@ export class Duration implements DurationObjWithRaw {
    */
   static parseISOString(isoString: string): number {
     const s = isoString.toLowerCase();
-    if (!s.startsWith("p") || !s.includes("t"))
+    if (!s.startsWith("p") || !s.includes("t")) {
       throw new Error(`Invalid ISO 8601 duration ${isoString}.`);
+    }
     const components = s.slice(1).split("t");
-    if (components[0].includes("y") || components[0].includes("m"))
+    if (components[0].includes("y") || components[0].includes("m")) {
       throw new Error(`Year and month are not supported.`);
+    }
     return new Duration(components[0]).raw + new Duration(components[1]).raw;
   }
 
@@ -831,38 +847,32 @@ export class Duration implements DurationObjWithRaw {
    */
   static #readString(str: string): DurationObjWithRaw {
     str = str.replace(/\s\s/g, "");
-    const days =
-      matchUnit(str, "d") || matchUnit(str, "days") || matchUnit(str, "day");
-    const hours =
-      matchUnit(str, "h") || matchUnit(str, "hours") || matchUnit(str, "hour");
-    const minutes =
-      matchUnit(str, "m") ||
+    const days = matchUnit(str, "d") || matchUnit(str, "days") ||
+      matchUnit(str, "day");
+    const hours = matchUnit(str, "h") || matchUnit(str, "hours") ||
+      matchUnit(str, "hour");
+    const minutes = matchUnit(str, "m") ||
       matchUnit(str, "min") ||
       matchUnit(str, "minute") ||
       matchUnit(str, "mins") ||
       matchUnit(str, "minutes");
-    const seconds =
-      matchUnit(str, "s") ||
+    const seconds = matchUnit(str, "s") ||
       matchUnit(str, "sec") ||
       matchUnit(str, "second") ||
       matchUnit(str, "secs") ||
       matchUnit(str, "seconds");
-    const milliseconds =
-      matchUnit(str, "ms") ||
+    const milliseconds = matchUnit(str, "ms") ||
       matchUnit(str, "millisecond") ||
       matchUnit(str, "milliseconds");
-    const nanoseconds =
-      matchUnit(str, "ns") ||
+    const nanoseconds = matchUnit(str, "ns") ||
       matchUnit(str, "nanosecond") ||
       matchUnit(str, "nanoseconds");
-    const microseconds =
-      matchUnit(str, "µs") ||
+    const microseconds = matchUnit(str, "µs") ||
       matchUnit(str, "microsecond") ||
       matchUnit(str, "microseconds") ||
       matchUnit(str, "us");
     return {
-      raw:
-        days * Duration.DAY +
+      raw: days * Duration.DAY +
         hours * Duration.HOUR +
         minutes * Duration.MINUTE +
         seconds * Duration.SECOND +
@@ -887,7 +897,7 @@ export class Duration implements DurationObjWithRaw {
   static since(when: number | Date): Duration {
     return Duration.between(
       when instanceof Date ? when.getTime() : when,
-      Date.now()
+      Date.now(),
     );
   }
 
@@ -909,7 +919,7 @@ export class Duration implements DurationObjWithRaw {
   static till(when: number | Date): Duration {
     return Duration.between(
       Date.now(),
-      when instanceof Date ? when.getTime() : when
+      when instanceof Date ? when.getTime() : when,
     );
   }
 

@@ -2,7 +2,8 @@
 
 ## Documentation
 
-Check out [JSR](https://jsr.io/@retraigo/duration/doc) for a complete documentation.
+Check out [JSR](https://jsr.io/@retraigo/duration/doc) for a complete
+documentation.
 
 Duration follows the `performance.now()` format, so microseconds and nanoseconds
 go after the decimal point.
@@ -116,11 +117,12 @@ console.log(duration.toTimeString());
 
 ### Microseconds
 
-Microseconds should normally use `µs`. However, for ease of development, we use `us`. 
-Consumers of this library can replace any instance of `us` in output strings with 
-`µs` using a simple `String.prototype.replace` if needed.
+Microseconds should normally use `µs`. However, for ease of development, we use
+`us`. Consumers of this library can replace any instance of `us` in output
+strings with `µs` using a simple `String.prototype.replace` if needed.
 
 Example
+
 ```ts
 const d = new Duration(120.560);
 console.log(d.toString().replace("us", "µs"));

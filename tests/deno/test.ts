@@ -84,29 +84,29 @@ Deno.test({
 
     assertEquals(
       duration1.toDescriptiveString(),
-      "0 days, 0 hours, 2 minutes, 1 second, 920 milliseconds, 0 microseconds, 0 nanoseconds"
+      "0 days, 0 hours, 2 minutes, 1 second, 920 milliseconds, 0 microseconds, 0 nanoseconds",
     );
     assertEquals(
       duration1.toDescriptiveString(true),
-      "2 minutes, 1 second, 920 milliseconds"
+      "2 minutes, 1 second, 920 milliseconds",
     );
     assertEquals(
       duration1.toDescriptiveString(["m", "s"]),
-      "2 minutes, 1 second"
+      "2 minutes, 1 second",
     );
 
     assertEquals(
       duration1.toWordString(),
-      "zero days, zero hours, two minutes, one second, nine hundred and twenty milliseconds, zero microseconds, zero nanoseconds"
+      "zero days, zero hours, two minutes, one second, nine hundred and twenty milliseconds, zero microseconds, zero nanoseconds",
     );
     assertEquals(
       duration1.toWordString(true),
-      "two minutes, one second, nine hundred and twenty milliseconds"
+      "two minutes, one second, nine hundred and twenty milliseconds",
     );
 
     assertEquals(
       duration1.toWordString(["m", "s"]),
-      "two minutes, one second"
+      "two minutes, one second",
     );
   },
 });
