@@ -25,7 +25,7 @@ If you are using NodeJS with TypeScript, use a `duration.js` version `>=4.2.0`.
 // Node
 import Duration from "@retraigo/duration.js";
 // Deno
-import Duration from "jsr:@retraigo/duration.js@6";
+import Duration from "jsr:@retraigo/duration@6";
 import Duration from "npm:@retraigo/duration.js@6";
 
 const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
