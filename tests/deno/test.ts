@@ -1,5 +1,5 @@
 import Duration from "../../mod.ts";
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals, assertGreater, assertLess } from "jsr:@std/assert";
 
 Deno.test({
   name: "Default duration is a zero duration.",
@@ -84,20 +84,107 @@ Deno.test({
 
     assertEquals(
       duration1.toDescriptiveString(),
-      "0 days, 0 hours, 2 minutes, 1 second, 920 milliseconds, 0 microseconds, 0 nanoseconds",
+      "0 days, 0 hours, 2 minutes, 1 second, 920 milliseconds, 0 microseconds, 0 nanoseconds"
     );
     assertEquals(
       duration1.toDescriptiveString(true),
-      "2 minutes, 1 second, 920 milliseconds",
+      "2 minutes, 1 second, 920 milliseconds"
+    );
+    assertEquals(
+      duration1.toDescriptiveString(["m", "s"]),
+      "2 minutes, 1 second"
     );
 
     assertEquals(
       duration1.toWordString(),
-      "zero days, zero hours, two minutes, one second, nine hundred and twenty milliseconds, zero microseconds, zero nanoseconds",
+      "zero days, zero hours, two minutes, one second, nine hundred and twenty milliseconds, zero microseconds, zero nanoseconds"
     );
     assertEquals(
       duration1.toWordString(true),
-      "two minutes, one second, nine hundred and twenty milliseconds",
+      "two minutes, one second, nine hundred and twenty milliseconds"
+    );
+
+    assertEquals(
+      duration1.toWordString(["m", "s"]),
+      "two minutes, one second"
     );
   },
+});
+
+Deno.test("Absolute value of a negative duration", () => {
+  const duration = new Duration("-5 seconds");
+  assertEquals(duration.abs(), new Duration("5 seconds"));
+});
+
+Deno.test("Absolute value of a positive duration", () => {
+  const duration = new Duration("5 seconds");
+  assertEquals(duration.abs(), new Duration("5 seconds"));
+});
+
+Deno.test("Negating a duration", () => {
+  const duration = new Duration("3 minutes");
+  assertEquals(duration.negated(), new Duration("-3 minutes"));
+});
+
+Deno.test("Negating a negative duration", () => {
+  const duration = new Duration("-3 minutes");
+  assertEquals(duration.negated(), new Duration("-3 minutes"));
+});
+
+Deno.test("Setting and getting components", () => {
+  const duration = new Duration()
+    .setDays(2)
+    .setHours(3)
+    .setMinutes(15)
+    .setSeconds(40)
+    .setMilliseconds(500)
+    .setMicroseconds(250)
+    .setNanoseconds(100);
+
+  assertEquals(duration.days, 2);
+  assertEquals(duration.hours, 3);
+  assertEquals(duration.minutes, 15);
+  assertEquals(duration.seconds, 40);
+  assertEquals(duration.milliseconds, 500);
+  assertEquals(duration.microseconds, 250);
+  assertEquals(duration.nanoseconds, 100);
+});
+
+Deno.test("Checking equality", () => {
+  const a = new Duration("1 minute");
+  const b = new Duration("60000 ms");
+  const c = new Duration("30000 ms");
+  assertEquals(a.equals(b), true);
+  assertEquals(a.equals(c), false);
+});
+
+Deno.test("ISO 8601 parsing and stringifying", () => {
+  const iso = "PT1H30M45.500S";
+  const duration = new Duration(iso);
+  assertEquals(duration.toISOString(), iso);
+
+  const iso2 = "P15DT1H30M45.500S";
+  const duration2 = new Duration(iso2);
+  assertEquals(duration2.toISOString(), iso2);
+});
+
+Deno.test("Default .toString() returns short string", () => {
+  const duration = new Duration(121920);
+  assertEquals(duration.toString(), duration.toShortString());
+});
+
+Deno.test("Setters are chainable", () => {
+  const d = new Duration().setMinutes(5).setSeconds(30);
+
+  assertEquals(d.minutes, 5);
+  assertEquals(d.seconds, 30);
+});
+
+Deno.test("Comparing durations", () => {
+  const a = new Duration("60 seconds");
+  const b = new Duration("1 minute");
+  const c = new Duration("30 seconds");
+  assertEquals(a.compareTo(b), 0);
+  assertGreater(a.compareTo(c), 0);
+  assertLess(c.compareTo(a), 0);
 });
