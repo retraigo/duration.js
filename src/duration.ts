@@ -527,6 +527,11 @@ export class Duration implements DurationObjWithRaw {
     return new Duration(this.raw / scalar);
   }
 
+  /**
+   * Check if another duration is equal to this.
+   * @param that Another duration
+   * @returns Whether the two durations are equal
+   */
   equals(that: Duration): boolean {
     if (this.raw === that.raw) return true;
     return false;
