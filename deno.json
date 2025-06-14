@@ -1,12 +1,17 @@
 {
   "name": "@retraigo/duration",
-  "version": "5.1.1",
+  "version": "6.0.0",
   "exclude": [
     ".github",
     ".vscode",
     ".npmignore",
     ".gitignore"
   ],
+  "test": {
+    "include": [
+      "tests/deno"
+    ]
+  },
   "exports": {
     ".": "./src/duration.ts",
     "./lite": "./src/duration.lite.ts"

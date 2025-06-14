@@ -2,7 +2,7 @@
 
 ## Documentation
 
-Check out [JSR](https://jsr.io/@retraigo/duration/doc) for documentation.
+Check out [JSR](https://jsr.io/@retraigo/duration/doc) for a complete documentation.
 
 Duration follows the `performance.now()` format, so microseconds and nanoseconds
 go after the decimal point.
@@ -24,8 +24,8 @@ If you are using NodeJS with TypeScript, use a `duration.js` version `>=4.2.0`.
 // Node
 import Duration from "@retraigo/duration.js";
 // Deno
-import Duration from "jsr:@retraigo/duration.js@5.0.0";
-import Duration from "npm:@retraigo/duration.js@5.0.0";
+import Duration from "jsr:@retraigo/duration.js@6";
+import Duration from "npm:@retraigo/duration.js@6";
 
 const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
 
@@ -112,6 +112,19 @@ console.log(duration.toWordString());
 // four microseconds, zero nanoseconds
 console.log(duration.toTimeString());
 // 00:16:37:14:344:334:000
+```
+
+### Microseconds
+
+Microseconds should normally use `µs`. However, for ease of development, we use `us`. 
+Consumers of this library can replace any instance of `us` in output strings with 
+`µs` using a simple `String.prototype.replace` if needed.
+
+Example
+```ts
+const d = new Duration(120.560);
+console.log(d.toString().replace("us", "µs"));
+// 0d 0h 0m 0s 120ms 560µs 0ns
 ```
 
 ## Support
