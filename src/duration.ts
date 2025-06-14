@@ -179,7 +179,11 @@ export class Duration implements DurationObjWithRaw {
   constructor(timestamp: number | string | Duration = 0) {
     let raw: number;
     if (typeof timestamp === "string") {
-      raw = Duration.#readString(timestamp).raw;
+      try {
+        raw = Duration.parseISOString(timestamp);
+      } catch(_e) {
+        raw = Duration.#readString(timestamp).raw;
+      }
     } else if (timestamp instanceof Duration) {
       raw = timestamp.raw;
     } else if (typeof timestamp === "number") {
@@ -519,6 +523,19 @@ export class Duration implements DurationObjWithRaw {
   }
 
   /**
+   * Compare with another duration.
+   * @param that Another duration
+   * @returns 0 if the durations are equal,
+   * -1 if the current duration is lesser,
+   * +1 if the current duration is greater
+   */
+  compareTo(that: Duration): number {
+    if (this.raw === that.raw) return 0;
+    else if (this.raw > that.raw) return 1;
+    else return (-1)
+  }
+
+  /**
    * Divide the duration by a scalar.
    * @param scalar Another duration
    * @returns Duration divided by a scalar
@@ -697,6 +714,20 @@ export class Duration implements DurationObjWithRaw {
   }
 
   /**
+   * Convert the duration into an ISO 8601 duration string.
+   * @returns ISO 8601 duration
+   */
+  toISOString(): string {
+    let isoString = "P";
+    if (this.d !== 0) isoString += `${this.d}D`
+    isoString += "T";
+    if (this.h !== 0) isoString += `${this.h}H`
+    if (this.m !== 0) isoString += `${this.m}M`
+    if (this.s !== 0 || this.ms !== 0) isoString += `${this.s}.${this.ms}S`
+    return isoString;
+  }
+
+  /**
    * Convert the Duration into a plain object.
    * @returns Duration object
    */
@@ -728,11 +759,11 @@ export class Duration implements DurationObjWithRaw {
   }
 
   /**
-   * Get a simple formatted duration in the form dd:hh:mm:ss:ms
+   * Get a simple formatted duration in the Xd Xh Xm Xs Xms
    * @returns Formatted string
    */
   toString(): string {
-    return `${this.getFormattedDurationArray().join(":")}`;
+    return `${this.toShortString()}`;
   }
 
   /**
@@ -867,6 +898,18 @@ export class Duration implements DurationObjWithRaw {
     const newDuration = new Duration(raw);
     return newDuration;
   }
+  /**
+   * Parse ISO 8601 duration strings
+   * @param isoString ISO 8601 duration
+   * @returns Number of milliseconds in the duration;
+   */
+  static parseISOString(isoString: string): number {
+    const s = isoString.toLowerCase();
+    if (!s.startsWith("p") || !s.includes("t")) throw new Error(`Invalid ISO 8601 duration ${isoString}.`);
+    const components = s.slice(1).split("t");
+    if (components[0].includes("y") || components[0].includes("m")) throw new Error(`Year and month are not supported.`);
+    return new Duration(components[1]).raw + new Duration(components[2]).raw;
+  }
 
   /**
    * Get the time since midnight in milliseconds.
@@ -992,13 +1035,10 @@ export class Duration implements DurationObjWithRaw {
  * @returns value Value of the unit matched
  */
 export function matchUnit(str: string, t: string): number {
-  const reg = new RegExp(`(\\d+)\\s?${t}(?:[^a-z]|$)`, "i");
+  const reg = new RegExp(`(-?\\d+(?:\\.\\d+)?)\\s?${t}(?:[^a-z]|$)`, "i");
   const matched = reg.exec(str);
   if (!matched) return 0;
-  return parseInt(matched[1].replace(t, ""));
+  return Number(matched[1].replace(t, ""));
 }
-
-// For CommonJS support
-// module.exports = Duration;
 
 export default Duration;
