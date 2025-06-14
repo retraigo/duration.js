@@ -367,7 +367,18 @@ export class Duration implements DurationObjWithRaw {
   abs(): Duration {
     return new Duration(Math.abs(this.raw))
   }
-  
+
+  /**
+   * Add another duration to the current duration.
+   * Mutates the duration.
+   * @param that Another duration
+   * @returns Updated duration
+   */
+  add(that: Duration): Duration {
+    this.raw += that.raw;
+    return this;
+  }
+
   /**
    * Get duration as days.
    * @returns Duration as days.
