@@ -1,5 +1,10 @@
 # duration.js
 
+Parse, modify, and format time durations.
+
+This library does not follow the `Temporal.Duration` spec. There may be a lot of
+similarities however.
+
 ## Documentation
 
 Check out [JSR](https://jsr.io/@retraigo/duration/doc) for a complete
