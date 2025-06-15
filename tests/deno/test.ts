@@ -128,7 +128,17 @@ Deno.test("Negating a duration", () => {
 
 Deno.test("Negating a negative duration", () => {
   const duration = new Duration("-3 minutes");
-  assertEquals(duration.negated(), new Duration("-3 minutes"));
+  assertEquals(duration.negated(), new Duration("3 minutes"));
+});
+
+Deno.test("Getting the negative of a duration", () => {
+  const duration = new Duration("3 minutes");
+  assertEquals(duration.negative(), new Duration("-3 minutes"));
+});
+
+Deno.test("Getting the negative of a negative duration", () => {
+  const duration = new Duration("-3 minutes");
+  assertEquals(duration.negative(), new Duration("-3 minutes"));
 });
 
 Deno.test("Setting and getting components", () => {

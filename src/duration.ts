@@ -1,5 +1,5 @@
 /**
- * A library for formatting time duration.
+ * A library for parsing and formatting time durations.
  *
  * ## Usage
  *
@@ -20,72 +20,8 @@
  * new Duration(0); // Just 0
  *
  * new Duration(-1); // Negative duration returns a negative time
- * ```
  *
- * ### Duration since a timestamp
- * ```ts
- * const start = performance.now()
- * // Do some long task
- * const d = Duration.since(start)
- * ```
- *
- * ### Duration between two timestamps
- * ```ts
- * const start = performance.now()
- * // Do some long task
- * const check = performance.now()
- * const d = Duration.between(start, check)
- * ```
- *
- * ### From Text
- *
- * ```js
- * Duration.fromString("1m2s"); // Duration {d:0, h:0, m:1, s:2, ms:0}
- *
- * Duration.fromString("4090 sec 4939  days 7342  hour 2324milliseconds 4344 min"); // // Duration {d: 5246, h: 13, m: 52, s: 12, ms: 324 }
- * ```
- *
- * You can also get the entire Duration in milliseconds through the `raw` property.
- *
- * ```js
- * const dur = Duration.fromString(
- *   "4090 sec 4939  days 7342  hour 2324milliseconds 4344 min"
- * );
- * dur.raw; // 453304332324
- * ```
- *
- * ### Properties
- *
- * ```js
- * Duration {
- *     raw: 0 // Original milliseconds passed to the constructor
- *     d: 0, // Days
- *     h: 0, // Hours
- *     m: 0, // Minutes
- *     s: 0, // Seconds
- *     ms: 0 // Milliseconds
- *     us: 0 // Microseconds
- *     ns: 0 // Nanoseconds
- * };
- * ```
- *
- * ### Formatting
- *
- * ```ts
- * const duration = new Duration(59834344.334)
- *
- * console.log(duration)
- * // Duration { raw: 59834344.334, d: 0, h: 16, m: 37, s: 14, ms: 344, us: 334, ns: 0 }
- * console.log(duration.toDescriptiveString())
- * // 0 days, 16 hours, 37 minutes, 14 seconds, 344 milliseconds, 334 microseconds, 0 nanoseconds
- * console.log(duration.toShortString())
- * // 0d 16h 37m 14s 344ms 334us 0ns
- * console.log(duration.toWordString())
- * // zero days, sixteen hours, thirty seven minutes, fourteen seconds,
- * // three hundred and forty four milliseconds, three hundred and thirty
- * // four microseconds, zero nanoseconds
- * console.log(duration.toTimeString())
- * // 00:16:37:14:344:334:000
+ * new Duration("16 seconds"); // Equivalent to new Duration(16000);
  * ```
  * @module
  */
@@ -503,11 +439,21 @@ export class Duration implements DurationObjWithRaw {
   }
 
   /**
-   * Get the negated value of the duration. This
-   * is the opposite of `abs()`.
+   * Get the negated value of the duration.
+   * 3D becomes -3D.
+   * -5H becomes 5H.
    * @returns Negated duration
    */
   negated(): Duration {
+    return new Duration(-this.raw);
+  }
+
+  /**
+   * Get the negative value of the duration. This
+   * is the opposite of `abs()`.
+   * @returns Negative duration
+   */
+  negative(): Duration {
     return new Duration(-Math.abs(this.raw));
   }
 
