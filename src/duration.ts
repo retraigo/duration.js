@@ -9,7 +9,7 @@
  * // Node
  * import Duration from "@retraigo/duration.js";
  * // Deno
- * import Duration from "jsr:@retraigo/duration@6";
+ * import Duration from "jsr:@retraigo/duration@7";
  *
  * const Duration = await import("@retraigo/duration.js"); // Node with CommonJS
  *
