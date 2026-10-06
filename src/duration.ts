@@ -583,6 +583,8 @@ export class Duration implements DurationObjWithRaw {
     if (this.h !== 0) isoString += `${this.h}H`;
     if (this.m !== 0) isoString += `${this.m}M`;
     if (this.s !== 0 || this.ms !== 0) isoString += `${this.s}.${this.ms}S`;
+    if (isoString.endsWith("T")) isoString = isoString.slice(0, isoString.length - 1)
+    if (isoString === "PT" || isoString === "P") isoString = "P0H"
     return isoString;
   }
 

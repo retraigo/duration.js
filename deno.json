@@ -1,6 +1,6 @@
 {
   "name": "@retraigo/duration",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "exclude": [
     ".github",
     ".vscode",

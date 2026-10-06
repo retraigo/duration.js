@@ -176,6 +176,14 @@ Deno.test("ISO 8601 parsing and stringifying", () => {
   const iso2 = "P15DT1H30M45.500S";
   const duration2 = new Duration(iso2);
   assertEquals(duration2.toISOString(), iso2);
+
+  const iso3 = "P5D";
+  const duration3 = new Duration(iso3);
+  assertEquals(duration3.toISOString(), iso3);
+
+  const iso4 = "P0H";
+  const duration4 = new Duration(iso4);
+  assertEquals(duration4.toISOString(), iso4);
 });
 
 Deno.test("Default .toString() returns short string", () => {
